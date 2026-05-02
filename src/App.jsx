@@ -40,6 +40,15 @@ const SunMark = ({ size = 160, className = "", strokeWidth = 2.2 }) => (
   />
 );
 
+const ManifestoMark = ({ size = 160, className = "" }) => (
+  <img
+    src="public\logonom_kalasam.png" // ➔ Mets ici le lien vers l'image que tu veux pour le 2ème soleil
+    alt="Logo KALASAM"
+    className={`${className} object-contain`}
+    style={{ width: size, height: "auto" }}
+  />
+);
+
 // ---------- Wordmark ----------
 const Wordmark = ({ size = "lg", light = false }) => {
   const sizes = {
@@ -1155,7 +1164,7 @@ function HomePage({ onShop, onStory, onProduct, onAdd, onWish }) {
       {/* ---------- MANIFESTO BAND ---------- */}
       <section className="py-32 px-6 bg-sand-light/40">
         <div className="max-w-4xl mx-auto text-center">
-          <SunMark size={160} className="mx-auto mb-10 opacity-70" />
+          <ManifestoMark size={1600} className="mx-auto mb-10 opacity-70" />
           <p
             className="font-display italic text-petrol text-3xl md:text-5xl leading-[1.3] font-light"
             style={{ fontFamily: '"Cormorant Garamond", serif' }}
