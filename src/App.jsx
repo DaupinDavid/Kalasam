@@ -31,57 +31,13 @@ import {
    ========================================================= */
 
 // ---------- Brand emblem: the rising sun ----------
-const SunMark = ({ size = 80, className = "", strokeWidth = 2.2 }) => (
-  <svg
-    viewBox="0 0 140 140"
-    className={className}
-    style={{ width: size, height: size }}
-  >
-    <defs>
-      <linearGradient id="k-gold" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#F1D998" />
-        <stop offset="45%" stopColor="#C89E4E" />
-        <stop offset="100%" stopColor="#8A6A28" />
-      </linearGradient>
-      <radialGradient id="k-sphere" cx="38%" cy="32%" r="70%">
-        <stop offset="0%" stopColor="#F8E3A8" />
-        <stop offset="55%" stopColor="#C89E4E" />
-        <stop offset="100%" stopColor="#7A5C24" />
-      </radialGradient>
-    </defs>
-    {[...Array(16)].map((_, i) => {
-      const angle = i * 22.5 - 90;
-      const rad = (angle * Math.PI) / 180;
-      const inner = 32;
-      const outer = i % 2 === 0 ? 64 : 54;
-      const x1 = 70 + Math.cos(rad) * inner;
-      const y1 = 70 + Math.sin(rad) * inner;
-      const x2 = 70 + Math.cos(rad) * outer;
-      const y2 = 70 + Math.sin(rad) * outer;
-      return (
-        <line
-          key={i}
-          x1={x1}
-          y1={y1}
-          x2={x2}
-          y2={y2}
-          stroke="url(#k-gold)"
-          strokeWidth={strokeWidth}
-          strokeLinecap="round"
-        />
-      );
-    })}
-    <circle cx="70" cy="70" r="26" fill="url(#k-sphere)" />
-    <circle
-      cx="70"
-      cy="70"
-      r="26"
-      fill="none"
-      stroke="#8A6A28"
-      strokeWidth="0.4"
-      opacity="0.5"
-    />
-  </svg>
+const SunMark = ({ size = 160, className = "", strokeWidth = 2.2 }) => (
+  <img
+    src="/favicon_kalasam.png"
+    alt="Logo KALASAM"
+    className={`${className} object-contain`}
+    style={{ width: size, height: "auto" }}
+  />
 );
 
 // ---------- Wordmark ----------
@@ -107,8 +63,8 @@ const Wordmark = ({ size = "lg", light = false }) => {
 const PRODUCTS = [
   {
     id: 1,
-    name: "Bernadette",
-    category: "Vestes",
+    name: "Horizon",
+    category: "Robes",
     price: 485,
     colors: [
       { name: "Pétrole", hex: "#1E3F52" },
@@ -123,8 +79,8 @@ const PRODUCTS = [
   },
   {
     id: 2,
-    name: "Diaspora",
-    category: "Robes",
+    name: "Diaspora (Appel)",
+    category: "Hauts",
     price: 395,
     colors: [
       { name: "Crème", hex: "#F4ECDB" },
@@ -132,15 +88,15 @@ const PRODUCTS = [
     ],
     sizes: ["XS", "S", "M", "L"],
     badge: null,
-    chapter: "Chapitre II — Traversée",
+    chapter: "Chapitre I — Origines",
     description:
       "Robe longue fluide aux drapés naturels. Une silhouette qui voyage, qui s'adapte, qui ne se contraint à aucun lieu.",
     img: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=900&q=80&auto=format&fit=crop",
   },
   {
     id: 3,
-    name: "Manille",
-    category: "Hauts",
+    name: "Manille (Régulateur)",
+    category: "Pantalons",
     price: 245,
     colors: [
       { name: "Ivoire", hex: "#F8F4ED" },
@@ -148,15 +104,15 @@ const PRODUCTS = [
     ],
     sizes: ["XS", "S", "M", "L", "XL"],
     badge: null,
-    chapter: "Chapitre III — Survie",
+    chapter: "Chapitre I — Origines",
     description:
       "Top en soie à coupe asymétrique. Inspiré des marchés colorés de Manille, transformé en quelque chose de précieux.",
     img: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=900&q=80&auto=format&fit=crop",
   },
   {
     id: 4,
-    name: "Jaffna",
-    category: "Hauts",
+    name: "Vague",
+    category: "Jupes",
     price: 195,
     colors: [
       { name: "Sable", hex: "#D2BD9C" },
@@ -164,15 +120,15 @@ const PRODUCTS = [
     ],
     sizes: ["XS", "S", "M", "L"],
     badge: null,
-    chapter: "Chapitre IV — Mémoire",
+    chapter: "Chapitre I — Origines",
     description:
       "Chemise en lin lourd, coupe ample. Référence aux terres du nord du Sri Lanka, à ce qui reste quand on est obligé de partir.",
     img: "https://images.unsplash.com/photo-1485518882345-15568b007407?w=900&q=80&auto=format&fit=crop",
   },
   {
     id: 5,
-    name: "Casablanca",
-    category: "Manteaux",
+    name: "(Avenir)",
+    category: "Vestes",
     price: 625,
     colors: [
       { name: "Sable", hex: "#D2BD9C" },
@@ -180,133 +136,14 @@ const PRODUCTS = [
     ],
     sizes: ["XS", "S", "M", "L", "XL"],
     badge: "Édition limitée",
-    chapter: "Chapitre V — Héritage",
+    chapter: "Chapitre I — Origines",
     description:
       "Trench oversize en gabardine de coton lourd. Un manteau qui protège et affirme, à la croisée des héritages marocain et français.",
     img: "https://images.unsplash.com/photo-1551803091-e20673f15770?w=900&q=80&auto=format&fit=crop",
   },
-  {
-    id: 6,
-    name: "Migration",
-    category: "Manteaux",
-    price: 445,
-    colors: [{ name: "Pétrole", hex: "#1E3F52" }],
-    sizes: ["S", "M", "L"],
-    badge: null,
-    chapter: "Chapitre II — Traversée",
-    description:
-      "Cape oversize, laine vierge française. Le mouvement comme acte fondateur — partir n'est pas fuir, c'est créer.",
-    img: "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=900&q=80&auto=format&fit=crop",
-  },
-  {
-    id: 7,
-    name: "Héritage",
-    category: "Mailles",
-    price: 325,
-    colors: [
-      { name: "Crème", hex: "#F4ECDB" },
-      { name: "Sable", hex: "#D2BD9C" },
-      { name: "Pétrole", hex: "#1E3F52" },
-    ],
-    sizes: ["XS", "S", "M", "L", "XL"],
-    badge: null,
-    chapter: "Chapitre I — Origines",
-    description:
-      "Pull en cachemire travaillé en côtes. Une pièce qui se transmet, comme les histoires que l'on raconte le soir.",
-    img: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=900&q=80&auto=format&fit=crop",
-  },
-  {
-    id: 8,
-    name: "Boulogne",
-    category: "Pantalons",
-    price: 265,
-    colors: [
-      { name: "Pétrole", hex: "#1E3F52" },
-      { name: "Noir", hex: "#1A1A1A" },
-    ],
-    sizes: ["XS", "S", "M", "L", "XL"],
-    badge: null,
-    chapter: "Chapitre I — Origines",
-    description:
-      "Pantalon large à pinces, taille haute. La rigueur du tailoring français rencontrée par la fluidité d'ailleurs.",
-    img: "https://images.unsplash.com/photo-1594633313593-bab3825d0caf?w=900&q=80&auto=format&fit=crop",
-  },
-  {
-    id: 9,
-    name: "Soleil",
-    category: "Jupes",
-    price: 295,
-    colors: [
-      { name: "Or", hex: "#C89E4E" },
-      { name: "Crème", hex: "#F4ECDB" },
-    ],
-    sizes: ["XS", "S", "M", "L"],
-    badge: "Nouveauté",
-    chapter: "Chapitre VI — Renaissance",
-    description:
-      "Jupe longue plissée, satin de coton. Les rayons du soleil KALASAM traduits en mouvement, en lumière, en élévation.",
-    img: "https://images.unsplash.com/photo-1583846783214-7229a91b20ed?w=900&q=80&auto=format&fit=crop",
-  },
-  {
-    id: 10,
-    name: "Origines",
-    category: "Hauts",
-    price: 165,
-    colors: [
-      { name: "Blanc", hex: "#FFFFFF" },
-      { name: "Sable", hex: "#D2BD9C" },
-    ],
-    sizes: ["XS", "S", "M", "L"],
-    badge: null,
-    chapter: "Chapitre I — Origines",
-    description:
-      "Top court en jersey lourd. Une base. Un point de départ. Tout part d'ici.",
-    img: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=900&q=80&auto=format&fit=crop",
-  },
-  {
-    id: 11,
-    name: "Résilience",
-    category: "Vestes",
-    price: 525,
-    colors: [
-      { name: "Pétrole", hex: "#1E3F52" },
-      { name: "Sable", hex: "#D2BD9C" },
-    ],
-    sizes: ["XS", "S", "M", "L"],
-    badge: null,
-    chapter: "Chapitre VII — Affirmation",
-    description:
-      "Veste structurée à boutonnage croisé. Pour celles qui savent que tenir debout est déjà une forme d'art.",
-    img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=900&q=80&auto=format&fit=crop",
-  },
-  {
-    id: 12,
-    name: "Mémoire",
-    category: "Robes",
-    price: 345,
-    colors: [
-      { name: "Pétrole", hex: "#1E3F52" },
-      { name: "Crème", hex: "#F4ECDB" },
-    ],
-    sizes: ["XS", "S", "M", "L", "XL"],
-    badge: null,
-    chapter: "Chapitre IV — Mémoire",
-    description:
-      "Robe midi à manches longues, viscose épaisse. Tout ce qui ne se dit pas, qui se porte.",
-    img: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=900&q=80&auto=format&fit=crop",
-  },
 ];
 
-const CATEGORIES = [
-  "Tout",
-  "Vestes",
-  "Manteaux",
-  "Robes",
-  "Hauts",
-  "Mailles",
-  "Pantalons",
-  "Jupes",
-];
+const CATEGORIES = ["Tout", "Vestes", "Robes", "Hauts", "Pantalons", "Jupes"];
 
 // ---------- Product image with elegant fallback ----------
 const ProductImage = ({ src, alt, name, className = "" }) => {
@@ -624,7 +461,7 @@ export default function KalasamSite() {
       <header className="sticky top-0 z-40 bg-cream/95 backdrop-blur-md border-b border-petrol/10">
         <div className="max-w-[1500px] mx-auto px-6 lg:px-12 py-5 grid grid-cols-3 items-center">
           {/* Left nav */}
-          <nav className="hidden md:flex items-center gap-8 text-[11px] tracking-[0.3em] uppercase font-light">
+          <nav className="hidden md:flex items-center gap-8 text-sm tracking-[0.25em] uppercase">
             <button
               onClick={() => goto("shop")}
               className={`hover:text-gold transition-colors ${page === "shop" ? "text-gold" : ""}`}
@@ -660,7 +497,7 @@ export default function KalasamSite() {
             className="justify-self-center flex items-center gap-2.5 group"
           >
             <SunMark
-              size={26}
+              size={45}
               className="transition-transform group-hover:rotate-45 duration-700"
             />
             <Wordmark size="md" />
@@ -1259,9 +1096,6 @@ function HomePage({ onShop, onStory, onProduct, onAdd, onWish }) {
     <>
       {/* ---------- HERO ---------- */}
       <section className="relative min-h-[88vh] bg-cream overflow-hidden hero-grain">
-        <div className="absolute top-1/2 -translate-y-1/2 right-[-12%] opacity-90 animate-slow-pulse pointer-events-none">
-          <SunMark size={620} />
-        </div>
         <div className="relative max-w-[1500px] mx-auto px-6 lg:px-12 pt-24 pb-20 grid md:grid-cols-12 gap-8 items-center min-h-[88vh]">
           <div className="md:col-span-7 lg:col-span-6 z-10">
             <p className="text-[10px] tracking-[0.45em] uppercase text-gold mb-8 animate-fadeUp">
@@ -1302,21 +1136,16 @@ function HomePage({ onShop, onStory, onProduct, onAdd, onWish }) {
               </button>
             </div>
           </div>
-          <div className="md:col-span-5 lg:col-span-6 relative h-[500px] md:h-[640px] hidden md:block">
-            <div className="absolute right-0 top-0 w-[68%] h-[78%] z-10">
-              <ProductImage
-                src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=900&q=80&auto=format&fit=crop"
-                name="Chapitre I"
-                alt="Hero"
-                className="w-full h-full"
-              />
-            </div>
-            <div className="absolute left-0 bottom-0 w-[55%] h-[55%] z-20 border-8 border-cream">
-              <ProductImage
-                src="https://images.unsplash.com/photo-1551803091-e20673f15770?w=900&q=80&auto=format&fit=crop"
-                name="Casablanca"
-                alt="Lifestyle"
-                className="w-full h-full"
+          <div className="md:col-span-5 lg:col-span-6 relative h-[500px] md:h-[640px] hidden md:flex items-center justify-center">
+            <div className="w-full h-full bg-sand/10 border border-petrol/10 overflow-hidden relative shadow-sm">
+              <video
+                src="./public/FILMKALASAM.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                controls
+                className="w-full h-full object-cover select-none"
               />
             </div>
           </div>
@@ -1326,7 +1155,7 @@ function HomePage({ onShop, onStory, onProduct, onAdd, onWish }) {
       {/* ---------- MANIFESTO BAND ---------- */}
       <section className="py-32 px-6 bg-sand-light/40">
         <div className="max-w-4xl mx-auto text-center">
-          <SunMark size={50} className="mx-auto mb-10 opacity-70" />
+          <SunMark size={160} className="mx-auto mb-10 opacity-70" />
           <p
             className="font-display italic text-petrol text-3xl md:text-5xl leading-[1.3] font-light"
             style={{ fontFamily: '"Cormorant Garamond", serif' }}
@@ -2276,6 +2105,7 @@ function ChaptersPage({ onProduct, onAdd, onWish }) {
   const chapters = [
     {
       num: "I",
+      season: "Printemps/Été 2026",
       title: "Origines",
       subtitle: "La terre, la lignée, ce qui fonde",
       desc: "Les racines françaises et lointaines. Bernadette, l'usine, le premier ancrage.",
@@ -2283,24 +2113,12 @@ function ChaptersPage({ onProduct, onAdd, onWish }) {
     },
     {
       num: "II",
+      season: "Automne/Hiver 2026-2027",
       title: "Traversée",
       subtitle: "Le mouvement comme acte fondateur",
       desc: "La diaspora. Quitter pour exister. Les océans, les avions, les nouvelles villes.",
       img: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=900&q=80&auto=format&fit=crop",
-    },
-    {
-      num: "III",
-      title: "Survie",
-      subtitle: "Tenir, malgré tout",
-      desc: "Les mains qui travaillent, les nuits sans sommeil, les combats invisibles.",
-      img: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=900&q=80&auto=format&fit=crop",
-    },
-    {
-      num: "IV",
-      title: "Mémoire",
-      subtitle: "Ce qui ne s'oublie pas",
-      desc: "Les histoires racontées le soir. Ce qui se transmet sans qu'on le décide.",
-      img: "https://images.unsplash.com/photo-1485518882345-15568b007407?w=900&q=80&auto=format&fit=crop",
+      isComingSoon: true,
     },
   ];
 
@@ -2314,11 +2132,11 @@ function ChaptersPage({ onProduct, onAdd, onWish }) {
           className="font-display text-petrol text-6xl md:text-8xl leading-tight font-light animate-fadeUp delay-100"
           style={{ fontFamily: '"Cormorant Garamond", serif' }}
         >
-          Les <span className="italic">chapitres</span>
+          Les <span className="italic">Chapitres</span>
         </h1>
         <p className="text-petrol/60 mt-6 max-w-xl mx-auto font-light animate-fadeUp delay-200">
-          Chaque collection est un chapitre de l'histoire KALASAM. Une mémoire,
-          une émotion, un territoire.
+          Chaque collection est un chapitre de l'histoire KALASAM. <br />
+          Une mémoire, une émotion, un territoire.
         </p>
       </section>
 
@@ -2351,35 +2169,52 @@ function ChaptersPage({ onProduct, onAdd, onWish }) {
                   >
                     Chapitre {c.num}
                   </p>
+
                   <h2
                     className="font-display text-5xl md:text-7xl leading-tight mb-4 italic font-light"
                     style={{ fontFamily: '"Cormorant Garamond", serif' }}
                   >
                     {c.title}
                   </h2>
+                  {c.season && (
+                    <p className="text-[11px] tracking-[0.3em] uppercase text-petrol font-medium mb-5">
+                      Collection {c.season}
+                    </p>
+                  )}
+
                   <p className="text-[11px] tracking-[0.3em] uppercase text-petrol/60 mb-6">
                     {c.subtitle}
                   </p>
                   <p className="text-petrol/80 text-lg leading-relaxed font-light mb-8">
                     {c.desc}
                   </p>
-                  {products.length > 0 && (
-                    <div>
-                      <p className="text-[10px] tracking-[0.3em] uppercase text-petrol/50 mb-4">
-                        Pièces du chapitre
-                      </p>
-                      <div className="flex flex-wrap gap-3">
-                        {products.map((p) => (
-                          <button
-                            key={p.id}
-                            onClick={() => onProduct(p)}
-                            className="border border-petrol/20 px-4 py-2 text-xs tracking-wider hover:bg-petrol hover:text-cream transition-all"
-                          >
-                            {p.name} · €{p.price}
-                          </button>
-                        ))}
-                      </div>
+
+                  {c.isComingSoon ? (
+                    <div className="inline-flex items-center gap-3 bg-sand-light/30 border border-gold/40 px-5 py-3 mt-4 animate-fadeUp">
+                      <span className="w-2 h-2 rounded-full bg-gold animate-pulse"></span>
+                      <span className="text-[11px] tracking-[0.3em] uppercase text-petrol font-medium">
+                        Nouvelle collection à venir
+                      </span>
                     </div>
+                  ) : (
+                    products.length > 0 && (
+                      <div>
+                        <p className="text-[10px] tracking-[0.3em] uppercase text-petrol/50 mb-4">
+                          Pièces du chapitre
+                        </p>
+                        <div className="flex flex-wrap gap-3">
+                          {products.map((p) => (
+                            <button
+                              key={p.id}
+                              onClick={() => onProduct(p)}
+                              className="border border-petrol/20 px-4 py-2 text-xs tracking-wider hover:bg-petrol hover:text-cream transition-all"
+                            >
+                              {p.name} · €{p.price}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )
                   )}
                 </div>
               </div>
