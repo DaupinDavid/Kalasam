@@ -42,7 +42,7 @@ const SunMark = ({ size = 160, className = "", strokeWidth = 2.2 }) => (
 
 const ManifestoMark = ({ size = 160, className = "" }) => (
   <img
-    src="public\logonom_kalasam.png" // ➔ Mets ici le lien vers l'image que tu veux pour le 2ème soleil
+    src="logonom_kalasam.png" // ➔ Mets ici le lien vers l'image que tu veux pour le 2ème soleil
     alt="Logo KALASAM"
     className={`${className} object-contain`}
     style={{ width: size, height: "auto" }}
