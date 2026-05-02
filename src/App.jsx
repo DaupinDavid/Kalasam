@@ -1139,7 +1139,7 @@ function HomePage({ onShop, onStory, onProduct, onAdd, onWish }) {
           <div className="md:col-span-5 lg:col-span-6 relative h-[500px] md:h-[640px] hidden md:flex items-center justify-center">
             <div className="w-full h-full bg-sand/10 border border-petrol/10 overflow-hidden relative shadow-sm">
               <video
-                src="./public/FILMKALASAM.mp4"
+                src="./FILMKALASAM.mp4"
                 autoPlay
                 loop
                 muted
