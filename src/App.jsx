@@ -74,7 +74,7 @@ const PRODUCTS = [
     id: 1,
     name: "Horizon",
     category: "Robes",
-    price: 485,
+    price: 12500,
     colors: [
       { name: "Pétrole", hex: "#1E3F52" },
       { name: "Sable", hex: "#D2BD9C" },
@@ -83,72 +83,72 @@ const PRODUCTS = [
     badge: "Nouveauté",
     chapter: "Chapitre I — Origines",
     description:
-      "Veste tailleur structurée à l'épaule construite. Hommage à Bernadette, qui quitta sa province pour rejoindre Boulogne-Billancourt à une époque où peu de femmes osaient franchir ce seuil seules.",
-    img: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=900&q=80&auto=format&fit=crop",
+      "Robe longue fluide aux drapés naturels. Une silhouette qui voyage, qui s'adapte, qui regarde vers l'avenir sans oublier d'où elle vient.",
+    img: "leader.jpeg",
   },
   {
     id: 2,
-    name: "Diaspora (Appel)",
+    name: "Diaspora",
     category: "Hauts",
-    price: 395,
+    price: 1500,
     colors: [
       { name: "Crème", hex: "#F4ECDB" },
       { name: "Pétrole", hex: "#1E3F52" },
     ],
     sizes: ["XS", "S", "M", "L"],
-    badge: null,
+    badge: "Nouveauté",
     chapter: "Chapitre I — Origines",
     description:
-      "Robe longue fluide aux drapés naturels. Une silhouette qui voyage, qui s'adapte, qui ne se contraint à aucun lieu.",
-    img: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=900&q=80&auto=format&fit=crop",
+      "Top en soie à coupe asymétrique. Inspiré des marchés colorés de Manille, transformé en une pièce précieuse qui raconte l'histoire d'un voyage.",
+    img: "appel.jpeg",
   },
   {
     id: 3,
-    name: "Manille (Régulateur)",
+    name: "Héritage",
     category: "Pantalons",
-    price: 245,
+    price: 3800,
     colors: [
       { name: "Ivoire", hex: "#F8F4ED" },
       { name: "Turquoise", hex: "#51B0AD" },
     ],
     sizes: ["XS", "S", "M", "L", "XL"],
-    badge: null,
+    badge: "Nouveauté",
     chapter: "Chapitre I — Origines",
     description:
-      "Top en soie à coupe asymétrique. Inspiré des marchés colorés de Manille, transformé en quelque chose de précieux.",
-    img: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=900&q=80&auto=format&fit=crop",
+      "Pantalon ample en lin lourd. Référence aux terres du nord du Sri Lanka, une coupe pensée pour ce qui reste quand on est obligé de partir, alliant confort et dignité.",
+    img: "regulateur.jpeg",
   },
   {
     id: 4,
     name: "Vague",
     category: "Jupes",
-    price: 195,
+    price: 2400,
     colors: [
       { name: "Sable", hex: "#D2BD9C" },
       { name: "Blanc", hex: "#FFFFFF" },
     ],
     sizes: ["XS", "S", "M", "L"],
-    badge: null,
+    badge: "Nouveauté",
     chapter: "Chapitre I — Origines",
     description:
-      "Chemise en lin lourd, coupe ample. Référence aux terres du nord du Sri Lanka, à ce qui reste quand on est obligé de partir.",
-    img: "https://images.unsplash.com/photo-1485518882345-15568b007407?w=900&q=80&auto=format&fit=crop",
+      "Jupe mi-longue aux ondulations subtiles. Un hommage aux mouvements de la mer et aux rivages qu'il a fallu traverser pour écrire une nouvelle histoire.",
+    img: "tactique.jpeg",
   },
   {
     id: 5,
-    name: "(Avenir)",
+    name: "Aube",
     category: "Vestes",
-    price: 625,
+    price: 7200,
     colors: [
       { name: "Sable", hex: "#D2BD9C" },
       { name: "Pétrole", hex: "#1E3F52" },
     ],
     sizes: ["XS", "S", "M", "L", "XL"],
-    badge: "Édition limitée",
+    badge: "Nouveauté",
     chapter: "Chapitre I — Origines",
     description:
-      "Trench oversize en gabardine de coton lourd. Un manteau qui protège et affirme, à la croisée des héritages marocain et français.",
-    img: "https://images.unsplash.com/photo-1551803091-e20673f15770?w=900&q=80&auto=format&fit=crop",
+      "Veste tailleur structurée à l'épaule construite. Hommage à Bernadette, qui quitta sa province pour rejoindre Boulogne-Billancourt à une époque où peu de femmes osaient franchir ce seuil seules.",
+    img: "avenir.jpeg",
   },
 ];
 
@@ -445,6 +445,7 @@ export default function KalasamSite() {
       `}</style>
 
       {/* ---------- TOP UTILITY BAR ---------- */}
+
       <div className="bg-petrol text-cream/90 text-[10px] tracking-[0.25em] uppercase">
         <div className="overflow-hidden whitespace-nowrap py-2.5">
           <div className="marquee">
