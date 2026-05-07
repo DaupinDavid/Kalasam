@@ -247,7 +247,7 @@ const ProductCard = ({ product, onOpen, onAdd, onWish }) => (
         className="font-display text-petrol text-lg tracking-wider mt-3"
         style={{ fontFamily: '"Cormorant Garamond", serif' }}
       >
-        €{product.price}
+        {product.price}€
       </span>
     </div>
   </div>
@@ -321,6 +321,13 @@ export default function KalasamSite() {
   const openProduct = (p) => {
     setActiveProduct(p);
     setPage("product");
+  };
+
+  // NOUVELLE FONCTION AJOUTÉE ICI 👇
+  const handleCheckoutComplete = () => {
+    setCart([]);
+    setPage("success");
+    window.scrollTo({ top: 0, behavior: "instant" });
   };
 
   const cartCount = cart.reduce((s, i) => s + i.qty, 0);
@@ -669,6 +676,39 @@ export default function KalasamSite() {
             onWish={toggleWish}
             onShop={() => goto("shop")}
           />
+        )}
+        {/* NOUVELLES PAGES AJOUTÉES ICI 👇 */}
+        {page === "checkout" && (
+          <CheckoutPage
+            cart={cart}
+            cartTotal={cartTotal}
+            onBack={() => goto("shop")}
+            onComplete={handleCheckoutComplete}
+          />
+        )}
+        {page === "success" && (
+          <div className="bg-cream min-h-[70vh] flex flex-col items-center justify-center py-24 px-6 text-center animate-fadeIn">
+            <SunMark size={80} className="mb-8 opacity-80" />
+            <p className="text-[10px] tracking-[0.4em] uppercase text-gold mb-4">
+              Commande confirmée
+            </p>
+            <h1
+              className="font-display text-5xl md:text-6xl mb-6 font-light"
+              style={{ fontFamily: '"Cormorant Garamond", serif' }}
+            >
+              Merci pour votre confiance.
+            </h1>
+            <p className="text-petrol/70 font-light max-w-md mx-auto mb-10">
+              Un e-mail de confirmation contenant votre numéro de suivi vous
+              sera envoyé d'ici peu. Bienvenue dans l'histoire KALASAM.
+            </p>
+            <button
+              onClick={() => goto("home")}
+              className="border border-petrol px-10 py-4 text-[11px] tracking-[0.3em] uppercase hover:bg-petrol hover:text-cream transition-all"
+            >
+              Retour à l'accueil
+            </button>
+          </div>
         )}
       </main>
 
@@ -1044,7 +1084,7 @@ export default function KalasamSite() {
                               fontFamily: '"Cormorant Garamond", serif',
                             }}
                           >
-                            €{item.price * item.qty}
+                            {item.price * item.qty}€
                           </span>
                         </div>
                       </div>
@@ -1057,12 +1097,12 @@ export default function KalasamSite() {
               <div className="border-t border-petrol/10 p-6 space-y-4 bg-sand-light/40">
                 <div className="flex justify-between text-sm font-light">
                   <span>Sous-total</span>
-                  <span>€{cartTotal}</span>
+                  <span>{cartTotal}€</span>
                 </div>
                 <div className="flex justify-between text-sm font-light">
                   <span>Livraison</span>
                   <span className="text-gold">
-                    {cartTotal >= 200 ? "Offerte" : "€12"}
+                    {cartTotal >= 200 ? "Offerte" : "12€"}
                   </span>
                 </div>
                 <div
@@ -1070,9 +1110,16 @@ export default function KalasamSite() {
                   style={{ fontFamily: '"Cormorant Garamond", serif' }}
                 >
                   <span>Total</span>
-                  <span>€{cartTotal + (cartTotal >= 200 ? 0 : 12)}</span>
+                  <span>{cartTotal + (cartTotal >= 200 ? 0 : 12)}€</span>
                 </div>
-                <button className="w-full bg-petrol text-cream py-4 text-[11px] tracking-[0.3em] uppercase hover:bg-petrol-dark transition-colors mt-4">
+                {/* BOUTON MODIFIÉ ICI 👇 */}
+                <button 
+                  onClick={() => {
+                    setCartOpen(false);
+                    goto("checkout");
+                  }}
+                  className="w-full bg-petrol text-cream py-4 text-[11px] tracking-[0.3em] uppercase hover:bg-petrol-dark transition-colors mt-4"
+                >
                   Passer au paiement
                 </button>
                 <p className="text-[10px] text-petrol/50 text-center font-light tracking-wider">
@@ -1643,7 +1690,7 @@ function ProductPage({ product, onAdd, onWish, onBack, onProduct }) {
               className="font-display text-3xl mb-8"
               style={{ fontFamily: '"Cormorant Garamond", serif' }}
             >
-              €{product.price}
+              {product.price}€
             </p>
 
             <p className="text-petrol/80 leading-relaxed mb-10 font-light">
@@ -2115,7 +2162,7 @@ function ChaptersPage({ onProduct, onAdd, onWish }) {
   const chapters = [
     {
       num: "I",
-      season: "Printemps/Été 2026",
+      season: "Printemps/Été 2027",
       title: "Origines",
       subtitle: "La terre, la lignée, ce qui fonde",
       desc: "Les racines françaises et lointaines. Bernadette, l'usine, le premier ancrage.",
@@ -2123,7 +2170,7 @@ function ChaptersPage({ onProduct, onAdd, onWish }) {
     },
     {
       num: "II",
-      season: "Automne/Hiver 2026-2027",
+      season: "Automne/Hiver 2027-2028",
       title: "Traversée",
       subtitle: "Le mouvement comme acte fondateur",
       desc: "La diaspora. Quitter pour exister. Les océans, les avions, les nouvelles villes.",
@@ -2219,7 +2266,7 @@ function ChaptersPage({ onProduct, onAdd, onWish }) {
                               onClick={() => onProduct(p)}
                               className="border border-petrol/20 px-4 py-2 text-xs tracking-wider hover:bg-petrol hover:text-cream transition-all"
                             >
-                              {p.name} · €{p.price}
+                              {p.name} · {p.price}€
                             </button>
                           ))}
                         </div>
@@ -2366,6 +2413,233 @@ function WishlistPage({ products, onProduct, onAdd, onWish, onShop }) {
             ))}
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+/* =========================================================
+   CHECKOUT PAGE
+   ========================================================= */
+function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
+  const [step, setStep] = useState(1);
+  const shippingCost = cartTotal >= 200 ? 0 : 12;
+  const finalTotal = cartTotal + shippingCost;
+
+  if (cart.length === 0) {
+    return (
+      <div className="bg-cream min-h-[70vh] flex flex-col items-center justify-center py-24 px-6 text-center">
+        <h2
+          className="font-display text-4xl mb-4 italic"
+          style={{ fontFamily: '"Cormorant Garamond", serif' }}
+        >
+          Votre panier est vide
+        </h2>
+        <button
+          onClick={onBack}
+          className="bg-petrol text-cream px-8 py-4 text-[11px] tracking-[0.3em] uppercase hover:bg-petrol-dark transition-colors mt-6"
+        >
+          Retour à la boutique
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-cream min-h-screen">
+      <div className="max-w-[1500px] mx-auto px-6 lg:px-12 py-12 lg:py-24">
+        {/* En-tête Checkout */}
+        <div className="mb-12">
+          <button
+            onClick={onBack}
+            className="flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-petrol/60 hover:text-gold transition-colors mb-6"
+          >
+            <ChevronLeft size={14} /> Retour au panier
+          </button>
+          <h1
+            className="font-display text-petrol text-5xl font-light"
+            style={{ fontFamily: '"Cormorant Garamond", serif' }}
+          >
+            Paiement sécurisé
+          </h1>
+        </div>
+
+        <div className="grid lg:grid-cols-12 gap-16">
+          {/* Colonne Formulaire (Gauche) */}
+          <div className="lg:col-span-7 space-y-12">
+            {/* Section 1 : Contact */}
+            <section>
+              <h2 className="text-[11px] tracking-[0.3em] uppercase text-petrol mb-6 border-b border-petrol/10 pb-3">
+                1. Contact
+              </h2>
+              <input
+                type="email"
+                placeholder="Adresse e-mail"
+                className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
+              />
+            </section>
+
+            {/* Section 2 : Livraison */}
+            <section>
+              <h2 className="text-[11px] tracking-[0.3em] uppercase text-petrol mb-6 border-b border-petrol/10 pb-3">
+                2. Livraison
+              </h2>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <input
+                  type="text"
+                  placeholder="Prénom"
+                  className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
+                />
+                <input
+                  type="text"
+                  placeholder="Nom"
+                  className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
+                />
+              </div>
+              <input
+                type="text"
+                placeholder="Adresse"
+                className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors mb-4"
+              />
+              <input
+                type="text"
+                placeholder="Appartement, suite, etc. (optionnel)"
+                className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors mb-4"
+              />
+              <div className="grid grid-cols-3 gap-4 mb-4">
+                <input
+                  type="text"
+                  placeholder="Code postal"
+                  className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
+                />
+                <input
+                  type="text"
+                  placeholder="Ville"
+                  className="col-span-2 w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
+                />
+              </div>
+              <select className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors text-petrol/70">
+                <option value="FR">France</option>
+                <option value="BE">Belgique</option>
+                <option value="CH">Suisse</option>
+                <option value="CA">Canada</option>
+              </select>
+            </section>
+
+            {/* Section 3 : Paiement */}
+            <section>
+              <h2 className="text-[11px] tracking-[0.3em] uppercase text-petrol mb-6 border-b border-petrol/10 pb-3">
+                3. Paiement
+              </h2>
+              <div className="bg-sand-light/20 p-6 border border-petrol/10">
+                <input
+                  type="text"
+                  placeholder="Nom sur la carte"
+                  className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors mb-4"
+                />
+                <div className="relative mb-4">
+                  <input
+                    type="text"
+                    placeholder="Numéro de carte"
+                    className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
+                  />
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2 opacity-50">
+                    <span className="text-[10px] border border-petrol px-1 rounded">
+                      CB
+                    </span>
+                    <span className="text-[10px] border border-petrol px-1 rounded">
+                      VISA
+                    </span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <input
+                    type="text"
+                    placeholder="MM/AA"
+                    className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
+                  />
+                  <input
+                    type="text"
+                    placeholder="CVC"
+                    className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
+                  />
+                </div>
+              </div>
+            </section>
+
+            <button
+              onClick={onComplete}
+              className="w-full bg-petrol text-cream py-5 text-[12px] tracking-[0.3em] uppercase hover:bg-petrol-dark transition-colors mt-8"
+            >
+              Valider la Commande
+            </button>
+            <p className="text-[10px] text-petrol/50 text-center font-light tracking-wider mt-4 flex items-center justify-center gap-2">
+              <Check size={12} /> Connexion chiffrée & paiement sécurisé
+            </p>
+          </div>
+
+          {/* Colonne Récapitulatif (Droite) */}
+          <div className="lg:col-span-5">
+            <div className="bg-sand-light/40 p-8 sticky top-32">
+              <h3
+                className="font-display text-2xl mb-6 border-b border-petrol/10 pb-4"
+                style={{ fontFamily: '"Cormorant Garamond", serif' }}
+              >
+                Résumé de la commande
+              </h3>
+
+              <div className="space-y-4 mb-6 max-h-[40vh] overflow-y-auto pr-2">
+                {cart.map((item, i) => (
+                  <div key={i} className="flex gap-4">
+                    <div className="w-16 h-20 shrink-0 bg-sand">
+                      <img
+                        src={item.img}
+                        alt={item.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex-1 text-sm font-light">
+                      <div className="flex justify-between">
+                        <span className="font-medium text-petrol">
+                          {item.name}
+                        </span>
+                        <span>{item.price * item.qty}€</span>
+                      </div>
+                      <p className="text-petrol/60 text-xs mt-1">
+                        {item.color.name} · Taille {item.size}
+                      </p>
+                      <p className="text-petrol/60 text-xs">Qté : {item.qty}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="border-t border-petrol/10 pt-4 space-y-3 text-sm font-light">
+                <div className="flex justify-between">
+                  <span>Sous-total</span>
+                  <span>{cartTotal}€</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Livraison</span>
+                  <span className={shippingCost === 0 ? "text-gold" : ""}>
+                    {shippingCost === 0 ? "Offerte" : `${shippingCost}€`}
+                  </span>
+                </div>
+              </div>
+
+              <div className="border-t border-petrol/10 pt-4 mt-4 flex justify-between items-end">
+                <span className="text-[11px] tracking-[0.2em] uppercase text-petrol/60">
+                  Total (TTC)
+                </span>
+                <span
+                  className="font-display text-3xl text-petrol"
+                  style={{ fontFamily: '"Cormorant Garamond", serif' }}
+                >
+                  {finalTotal}€
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
