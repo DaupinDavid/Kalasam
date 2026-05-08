@@ -552,7 +552,7 @@ export default function KalasamSite() {
             <img
               src="logonom_kalasam.png"
               alt="KALASAM"
-              className="h-8 md:h-9.5 w-auto object-contain transition-opacity duration-300 group-hover:opacity-60 -translate-y-1.5"
+              className="h-8 md:h-[38px] w-auto object-contain transition-opacity duration-300 group-hover:opacity-60 -translate-y-1.5"
             />
           </button>
 
@@ -1207,43 +1207,39 @@ function HomePage({ onShop, onStory, onProduct, onAdd, onWish }) {
           {/* Overlay dégradé renforcé pour faire ressortir les textes et boutons en bas à gauche */}
           <div className="absolute inset-0 bg-gradient-to-t from-petrol/90 via-petrol/30 to-transparent pointer-events-none md:bg-gradient-to-tr"></div>
         </div>
-        {/* Contenu et CTAs superposés (Alignés à gauche) */}       {" "}
-        <div className="relative z-10 max-w-[1500px] w-full mx-auto px-4 lg:px-6 pb-[56px] lg:pb-[75px] pointer-events-none">
-          <div className="max-w-2xl text-cream pointer-events-auto">
-                        {/* Slogan */}           {" "}
-            <h1
-              className="font-display font-light text-4xl md:text-5xl leading-[0.9] mb-4 animate-fadeUp delay-100"
-              style={{
-                fontFamily: '"Cormorant Garamond", serif',
-                letterSpacing: "-0.02em",
-              }}
+
+        {/* Contenu et CTAs superposés (Alignés à gauche) */}
+        <div className="relative z-10 max-w-[1500px] w-full mx-auto px-4 lg:px-6 pb-[56px] lg:pb-[75px] pointer-events-none flex flex-col items-start">
+          {/* Slogan (on applique le cliquable "pointer-events-auto" uniquement à ce texte précis) */}
+          <h1
+            className="font-display font-light text-4xl md:text-5xl leading-[0.9] mb-4 text-cream animate-fadeUp delay-100 pointer-events-auto w-fit"
+            style={{
+              fontFamily: '"Cormorant Garamond", serif',
+              letterSpacing: "-0.02em",
+            }}
+          >
+            De l'exil <span className="italic opacity-90">à l'identité.</span>
+          </h1>
+
+          {/* Boutons d'action (on applique le cliquable "pointer-events-auto" uniquement aux boutons) */}
+          <div className="flex flex-col sm:flex-row gap-3 animate-fadeUp delay-300 pointer-events-auto w-fit">
+            <button
+              onClick={onShop}
+              className="group bg-cream text-petrol px-6 py-2.5 text-[9px] tracking-[0.2em] uppercase hover:bg-gold hover:text-cream transition-all flex items-center justify-center gap-2 shadow-sm w-fit"
             >
-                            De l'exil{" "}
-              <span className="italic opacity-90">à l'identité.</span>         
-               {" "}
-            </h1>
-                        {/* Boutons d'action */}
-            <div className="flex flex-col sm:flex-row gap-3 animate-fadeUp delay-300">
-              <button
-                onClick={onShop}
-                className="group bg-cream text-petrol px-6 py-2.5 text-[9px] tracking-[0.2em] uppercase hover:bg-gold hover:text-cream transition-all flex items-center justify-center gap-2 shadow-sm w-fit"
-              >
-                Découvrir la collection
-                <ArrowRight
-                  size={11}
-                  className="group-hover:translate-x-1 transition-transform"
-                />
-              </button>
-              <button
-                onClick={onStory}
-                className="border border-cream/50 text-cream px-6 py-2.5 text-[9px] tracking-[0.2em] uppercase hover:bg-cream hover:text-petrol transition-all backdrop-blur-sm flex items-center justify-center w-fit"
-              >
-                Notre histoire
-              </button>
-            </div>
-                     {" "}
+              Découvrir la collection
+              <ArrowRight
+                size={11}
+                className="group-hover:translate-x-1 transition-transform"
+              />
+            </button>
+            <button
+              onClick={onStory}
+              className="border border-cream/50 text-cream px-6 py-2.5 text-[9px] tracking-[0.2em] uppercase hover:bg-cream hover:text-petrol transition-all backdrop-blur-sm flex items-center justify-center w-fit"
+            >
+              Notre histoire
+            </button>
           </div>
-                 {" "}
         </div>
       </section>
 
