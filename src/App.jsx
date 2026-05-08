@@ -384,9 +384,18 @@ export default function KalasamSite() {
   }, [shopFilter, shopSort, searchQuery]);
 
   const goto = (newPage) => {
+    if (newPage === "contact") {
+      const el = document.getElementById("footer-contact");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+        setMenuOpen(false);
+      }
+      return;
+    }
     setPage(newPage);
     setMenuOpen(false);
     setSearchOpen(false);
+    window.scrollTo(0, 0);
     if (newPage !== "product") setActiveProduct(null);
   };
 
@@ -963,7 +972,7 @@ export default function KalasamSite() {
               </ul>
             </div>
 
-            <div className="md:col-span-2">
+            <div className="md:col-span-2" id="footer-contact">
               <h4 className="text-[10px] tracking-[0.3em] uppercase text-petrol mb-5 font-medium">
                 Contact
               </h4>
@@ -972,13 +981,15 @@ export default function KalasamSite() {
                   <MapPin size={13} className="mt-0.5 shrink-0" /> Atelier Paris
                   XIe
                 </li>
-                <li className="flex items-start gap-2">
-                  <Mail size={13} className="mt-0.5 shrink-0" />{" "}
-                  bonjour@kalasam.fr
+                <li>
+                  <a href="mailto:bonjour@kalasam.fr" className="flex items-start gap-2 hover:text-gold transition-colors">
+                    <Mail size={13} className="mt-0.5 shrink-0" /> bonjour@kalasam.fr
+                  </a>
                 </li>
-                <li className="flex items-start gap-2">
-                  <Phone size={13} className="mt-0.5 shrink-0" /> +33 1 84 60 22
-                  11
+                <li>
+                  <a href="tel:+33184602211" className="flex items-start gap-2 hover:text-gold transition-colors">
+                    <Phone size={13} className="mt-0.5 shrink-0" /> +33 1 84 60 22 11
+                  </a>
                 </li>
               </ul>
               <div className="flex gap-3 mt-5">
