@@ -1151,60 +1151,76 @@ function HomePage({ onShop, onStory, onProduct, onAdd, onWish }) {
 
   return (
     <>
-      {/* ---------- HERO ---------- */}
-      <section className="relative min-h-[88vh] bg-cream overflow-hidden hero-grain">
-        <div className="relative max-w-[1500px] mx-auto px-6 lg:px-12 pt-24 pb-20 grid md:grid-cols-12 gap-8 items-center min-h-[88vh]">
-          <div className="md:col-span-7 lg:col-span-6 z-10">
-            <p className="text-[10px] tracking-[0.45em] uppercase text-gold mb-8 animate-fadeUp">
-              ✦ Chapitre I — Origines · automne 2026
-            </p>
-            <h1
-              className="font-display font-light text-petrol text-7xl md:text-[9rem] leading-[0.85] mb-8 animate-fadeUp delay-100"
-              style={{
-                fontFamily: '"Cormorant Garamond", serif',
-                letterSpacing: "-0.02em",
-              }}
+      {/* ---------- HERO — FULLSCREEN VIDEO ---------- */}
+      <section className="relative w-full overflow-hidden" style={{ height: '100vh' }}>
+        {/* Fullscreen video background */}
+        <video
+          src="./FILMKALASAM.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover select-none"
+          style={{ zIndex: 0 }}
+        />
+
+        {/* Gradient overlay for text legibility */}
+        <div
+          className="absolute inset-0"
+          style={{
+            zIndex: 1,
+            background: 'linear-gradient(to bottom, rgba(0,0,0,0) 30%, rgba(0,0,0,0.25) 60%, rgba(0,0,0,0.65) 100%)',
+          }}
+        />
+
+        {/* Content — centered at bottom */}
+        <div
+          className="absolute inset-0 flex flex-col items-center justify-end text-center px-6 pb-16 md:pb-20"
+          style={{ zIndex: 2 }}
+        >
+          <p className="text-[10px] tracking-[0.45em] uppercase text-gold mb-5 animate-fadeUp" style={{ textShadow: '0 1px 8px rgba(0,0,0,0.4)' }}>
+            ✦ Chapitre I — Origines · automne 2026
+          </p>
+          <h1
+            className="font-display font-light text-cream text-6xl sm:text-7xl md:text-8xl lg:text-[9rem] leading-[0.88] mb-6 animate-fadeUp delay-100"
+            style={{
+              fontFamily: '"Cormorant Garamond", serif',
+              letterSpacing: '-0.02em',
+              textShadow: '0 2px 30px rgba(0,0,0,0.45)',
+            }}
+          >
+            De l'exil <span className="italic" style={{ opacity: 0.9 }}>à l'identité.</span>
+          </h1>
+          <p
+            className="text-cream/80 text-base md:text-lg leading-relaxed max-w-lg mb-8 font-light animate-fadeUp delay-200"
+            style={{ textShadow: '0 1px 6px rgba(0,0,0,0.3)' }}
+          >
+            Une maison née de deux histoires diasporiques. Des Philippines au
+            Sri Lanka, du Maroc à la France.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 animate-fadeUp delay-300">
+            <button
+              onClick={onShop}
+              className="group bg-cream/95 text-petrol px-10 py-4 text-[11px] tracking-[0.3em] uppercase hover:bg-cream transition-all flex items-center justify-center gap-3 backdrop-blur-sm"
             >
-              De l'exil
-              <br />
-              <span className="italic text-petrol/80">à l'identité.</span>
-            </h1>
-            <p className="text-petrol/70 text-lg leading-relaxed max-w-md mb-10 font-light animate-fadeUp delay-200">
-              Une maison née de deux histoires diasporiques. Des Philippines au
-              Sri Lanka, du Maroc à la France. Des pièces qui portent ce que les
-              mots ne savent pas dire.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 animate-fadeUp delay-300">
-              <button
-                onClick={onShop}
-                className="group bg-petrol text-cream px-10 py-4 text-[11px] tracking-[0.3em] uppercase hover:bg-petrol-dark transition-all flex items-center justify-center gap-3"
-              >
-                Découvrir la collection
-                <ArrowRight
-                  size={14}
-                  className="group-hover:translate-x-1 transition-transform"
-                />
-              </button>
-              <button
-                onClick={onStory}
-                className="border border-petrol px-10 py-4 text-[11px] tracking-[0.3em] uppercase hover:bg-petrol hover:text-cream transition-all"
-              >
-                Notre histoire
-              </button>
-            </div>
-          </div>
-          <div className="md:col-span-5 lg:col-span-6 relative h-[500px] md:h-[640px] hidden md:flex items-center justify-center">
-            <div className="w-full h-full bg-sand/10 border border-petrol/10 overflow-hidden relative shadow-sm">
-              <video
-                src="./FILMKALASAM.mp4"
-                autoPlay
-                loop
-                muted
-                playsInline
-                controls
-                className="w-full h-full object-cover select-none"
+              Découvrir la collection
+              <ArrowRight
+                size={14}
+                className="group-hover:translate-x-1 transition-transform"
               />
-            </div>
+            </button>
+            <button
+              onClick={onStory}
+              className="border border-cream/60 text-cream px-10 py-4 text-[11px] tracking-[0.3em] uppercase hover:bg-cream/20 transition-all backdrop-blur-sm"
+            >
+              Notre histoire
+            </button>
+          </div>
+
+          {/* Scroll indicator */}
+          <div className="mt-10 animate-fadeUp delay-500 flex flex-col items-center gap-2">
+            <div className="w-px h-8 bg-cream/40 animate-slow-pulse" />
+            <ChevronDown size={14} className="text-cream/50" />
           </div>
         </div>
       </section>
