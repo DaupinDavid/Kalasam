@@ -525,7 +525,7 @@ export default function KalasamSite() {
               onClick={() => goto("story")}
               className={`hover:text-gold transition-colors ${page === "story" ? "text-gold" : ""}`}
             >
-              L'Histoire
+              Notre Histoire
             </button>
             <button
               onClick={() => goto("chapters")}
@@ -547,13 +547,13 @@ export default function KalasamSite() {
           {/* Logo */}
           <button
             onClick={() => goto("home")}
-            className="justify-self-center flex items-center gap-2.5 group"
+            className="justify-self-center group"
           >
-            <SunMark
-              size={45}
-              className="transition-transform group-hover:rotate-45 duration-700"
+            <img
+              src="logonom_kalasam.png"
+              alt="KALASAM"
+              className="h-8 md:h-9.5 w-auto object-contain transition-opacity duration-300 group-hover:opacity-60 -translate-y-1.5"
             />
-            <Wordmark size="md" />
           </button>
 
           {/* Right utils */}
@@ -636,7 +636,11 @@ export default function KalasamSite() {
       {menuOpen && (
         <div className="fixed inset-0 z-50 bg-cream animate-fadeIn">
           <div className="flex items-center justify-between px-6 py-5 border-b border-petrol/10">
-            <SunMark size={26} />
+            <img
+              src="logonom_kalasam.png"
+              alt="KALASAM"
+              className="h-7 w-auto object-contain"
+            />
             <button onClick={() => setMenuOpen(false)}>
               <X size={22} />
             </button>
@@ -1187,79 +1191,59 @@ function HomePage({ onShop, onStory, onProduct, onAdd, onWish }) {
 
   return (
     <>
-      {/* ---------- HERO ---------- */}
-      <section className="relative min-h-[88vh] bg-cream overflow-hidden hero-grain">
-        <div className="relative max-w-[1500px] mx-auto px-6 lg:px-12 pt-24 pb-20 grid md:grid-cols-12 gap-8 items-center min-h-[88vh]">
-          <div className="md:col-span-7 lg:col-span-6 z-10">
-            <p className="text-[10px] tracking-[0.45em] uppercase text-gold mb-8 animate-fadeUp">
-              ✦ Chapitre I — Origines · automne 2026
-            </p>
+      {/* ---------- HERO VIDÉO ---------- */}
+      <section className="relative h-[calc(100vh-115px)] min-h-[500px] w-full flex items-end overflow-hidden">
+        {/* Vidéo en arrière-plan absolu */}
+        <div className="absolute inset-0 z-0 bg-petrol">
+          <video
+            src="./FILMKALASAM.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            controls
+            className="w-full h-full object-cover opacity-90"
+          />
+          {/* Overlay dégradé renforcé pour faire ressortir les textes et boutons en bas à gauche */}
+          <div className="absolute inset-0 bg-gradient-to-t from-petrol/90 via-petrol/30 to-transparent pointer-events-none md:bg-gradient-to-tr"></div>
+        </div>
+        {/* Contenu et CTAs superposés (Alignés à gauche) */}       {" "}
+        <div className="relative z-10 max-w-[1500px] w-full mx-auto px-4 lg:px-6 pb-[56px] lg:pb-[75px] pointer-events-none">
+          <div className="max-w-2xl text-cream pointer-events-auto">
+                        {/* Slogan */}           {" "}
             <h1
-              className="font-display font-light text-petrol text-7xl md:text-[9rem] leading-[0.85] mb-8 animate-fadeUp delay-100"
+              className="font-display font-light text-4xl md:text-5xl leading-[0.9] mb-4 animate-fadeUp delay-100"
               style={{
                 fontFamily: '"Cormorant Garamond", serif',
                 letterSpacing: "-0.02em",
               }}
             >
-              De l'exil
-              <br />
-              <span className="italic text-petrol/80">à l'identité.</span>
+                            De l'exil{" "}
+              <span className="italic opacity-90">à l'identité.</span>         
+               {" "}
             </h1>
-            <p className="text-petrol/70 text-lg leading-relaxed max-w-md mb-10 font-light animate-fadeUp delay-200">
-              Une maison née de deux histoires diasporiques. Des Philippines au
-              Sri Lanka, du Maroc à la France. Des pièces qui portent ce que les
-              mots ne savent pas dire.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 animate-fadeUp delay-300">
+                        {/* Boutons d'action */}
+            <div className="flex flex-col sm:flex-row gap-3 animate-fadeUp delay-300">
               <button
                 onClick={onShop}
-                className="group bg-petrol text-cream px-10 py-4 text-[11px] tracking-[0.3em] uppercase hover:bg-petrol-dark transition-all flex items-center justify-center gap-3"
+                className="group bg-cream text-petrol px-6 py-2.5 text-[9px] tracking-[0.2em] uppercase hover:bg-gold hover:text-cream transition-all flex items-center justify-center gap-2 shadow-sm w-fit"
               >
                 Découvrir la collection
                 <ArrowRight
-                  size={14}
+                  size={11}
                   className="group-hover:translate-x-1 transition-transform"
                 />
               </button>
               <button
                 onClick={onStory}
-                className="border border-petrol px-10 py-4 text-[11px] tracking-[0.3em] uppercase hover:bg-petrol hover:text-cream transition-all"
+                className="border border-cream/50 text-cream px-6 py-2.5 text-[9px] tracking-[0.2em] uppercase hover:bg-cream hover:text-petrol transition-all backdrop-blur-sm flex items-center justify-center w-fit"
               >
                 Notre histoire
               </button>
             </div>
+                     {" "}
           </div>
-          <div className="md:col-span-5 lg:col-span-6 relative h-[500px] md:h-[640px] hidden md:flex items-center justify-center">
-            <div className="w-full h-full bg-sand/10 border border-petrol/10 overflow-hidden relative shadow-sm">
-              <video
-                src="./FILMKALASAM.mp4"
-                autoPlay
-                loop
-                muted
-                playsInline
-                controls
-                className="w-full h-full object-cover select-none"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ---------- MANIFESTO BAND ---------- */}
-      <section className="py-32 px-6 bg-sand-light/40">
-        <div className="max-w-4xl mx-auto text-center">
-          <ManifestoMark size={1600} className="mx-auto mb-10 opacity-70" />
-          <p
-            className="font-display italic text-petrol text-3xl md:text-5xl leading-[1.3] font-light"
-            style={{ fontFamily: '"Cormorant Garamond", serif' }}
-          >
-            « Créer, pour nous, c'est honorer. C'est comprendre. C'est
-            transmettre. Porter ces histoires, non pas comme un poids, mais
-            comme une force. »
-          </p>
-          <p className="mt-10 text-[10px] tracking-[0.4em] uppercase text-petrol/60">
-            — Inspiré de l'Histoire de Justin & Thikana
-          </p>
+                 {" "}
         </div>
       </section>
 
