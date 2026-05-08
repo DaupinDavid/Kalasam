@@ -256,8 +256,18 @@ const ProductCard = ({ product, onOpen, onAdd, onWish }) => (
 // ---------- Main app ----------
 export default function KalasamSite() {
   const [page, setPage] = useState("home");
-  const [cart, setCart] = useState([]);
-  const [wishlist, setWishlist] = useState([]);
+  const [cart, setCart] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('kalasam_cart')) || []; } catch { return []; }
+  });
+  const [wishlist, setWishlist] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('kalasam_wishlist')) || []; } catch { return []; }
+  });
+  const [user, setUser] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('kalasam_user')) || null; } catch { return null; }
+  });
+  const [orders, setOrders] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('kalasam_orders')) || []; } catch { return []; }
+  });
   const [cartOpen, setCartOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeProduct, setActiveProduct] = useState(null);
@@ -272,6 +282,19 @@ export default function KalasamSite() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [page, activeProduct]);
+
+  useEffect(() => {
+    localStorage.setItem('kalasam_cart', JSON.stringify(cart));
+  }, [cart]);
+  useEffect(() => {
+    localStorage.setItem('kalasam_wishlist', JSON.stringify(wishlist));
+  }, [wishlist]);
+  useEffect(() => {
+    localStorage.setItem('kalasam_user', JSON.stringify(user));
+  }, [user]);
+  useEffect(() => {
+    localStorage.setItem('kalasam_orders', JSON.stringify(orders));
+  }, [orders]);
 
   const showToast = (msg) => {
     setToast(msg);
@@ -293,7 +316,7 @@ export default function KalasamSite() {
       }
       return [...prev, { ...product, size, color, qty: 1 }];
     });
-    showToast(`${product.name} ajouté au panier`);
+    setCartOpen(true);
   };
 
   const removeFromCart = (idx) =>
@@ -325,6 +348,14 @@ export default function KalasamSite() {
 
   // NOUVELLE FONCTION AJOUTÉE ICI 👇
   const handleCheckoutComplete = () => {
+    const newOrder = {
+      id: "CMD-" + Math.floor(Math.random() * 1000000),
+      date: new Date().toLocaleDateString("fr-FR"),
+      items: cart,
+      total: cartTotal + (cartTotal >= 200 ? 0 : 12),
+      status: "En cours de préparation"
+    };
+    setOrders(prev => [newOrder, ...prev]);
     setCart([]);
     setPage("success");
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -497,6 +528,12 @@ export default function KalasamSite() {
             >
               Chapitres
             </button>
+            <button
+              onClick={() => goto("atelier")}
+              className={`hover:text-gold transition-colors ${page === "atelier" ? "text-gold" : ""}`}
+            >
+              L'atelier
+            </button>
           </nav>
 
           {/* Mobile menu */}
@@ -521,7 +558,21 @@ export default function KalasamSite() {
           </button>
 
           {/* Right utils */}
-          <div className="flex items-center gap-5 justify-self-end">
+          <div className="flex items-center gap-6 justify-self-end">
+            <div className="hidden lg:flex items-center gap-6 text-sm tracking-[0.25em] uppercase mr-2">
+              <button
+                onClick={() => goto("service-livraison")}
+                className={`hover:text-gold transition-colors ${page.startsWith("service") ? "text-gold" : ""}`}
+              >
+                Service
+              </button>
+              <button
+                onClick={() => goto("contact")}
+                className={`hover:text-gold transition-colors ${page === "contact" ? "text-gold" : ""}`}
+              >
+                Contact
+              </button>
+            </div>
             <button
               onClick={() => setSearchOpen((s) => !s)}
               className="hover:text-gold transition-colors"
@@ -611,6 +662,9 @@ export default function KalasamSite() {
               { key: "shop", label: "Boutique" },
               { key: "story", label: "L'Histoire" },
               { key: "chapters", label: "Chapitres" },
+              { key: "atelier", label: "L'atelier" },
+              { key: "service-livraison", label: "Service" },
+              { key: "contact", label: "Contact" },
               { key: "account", label: "Mon compte" },
               { key: "wishlist", label: "Favoris" },
             ].map((item) => (
@@ -667,7 +721,7 @@ export default function KalasamSite() {
             onWish={toggleWish}
           />
         )}
-        {page === "account" && <AccountPage />}
+        {page === "account" && <AccountPage user={user} setUser={setUser} orders={orders} onShop={() => goto("shop")} />}
         {page === "wishlist" && (
           <WishlistPage
             products={PRODUCTS.filter((p) => wishlist.includes(p.id))}
@@ -686,6 +740,11 @@ export default function KalasamSite() {
             onComplete={handleCheckoutComplete}
           />
         )}
+        {page === "manifesto" && <ManifestoPage />}
+        {page === "atelier" && <AtelierPage />}
+        {page.startsWith("service") && <ServicePage initialTab={page.split("-")[1]} onShop={() => goto("shop")} />}
+        {page.startsWith("legal") && <LegalPage initialTab={page.split("-")[1]} />}
+        {page === "contact" && <ContactPage />}
         {page === "success" && (
           <div className="bg-cream min-h-[70vh] flex flex-col items-center justify-center py-24 px-6 text-center animate-fadeIn">
             <SunMark size={80} className="mb-8 opacity-80" />
@@ -807,12 +866,12 @@ export default function KalasamSite() {
                   </button>
                 </li>
                 <li>
-                  <button className="hover:text-gold transition-colors">
+                  <button onClick={() => goto("manifesto")} className="hover:text-gold transition-colors">
                     Le manifeste
                   </button>
                 </li>
                 <li>
-                  <button className="hover:text-gold transition-colors">
+                  <button onClick={() => goto("atelier")} className="hover:text-gold transition-colors">
                     L'atelier
                   </button>
                 </li>
@@ -877,27 +936,27 @@ export default function KalasamSite() {
               </h4>
               <ul className="space-y-3 text-sm font-light">
                 <li>
-                  <button className="hover:text-gold transition-colors">
+                  <button onClick={() => goto("service-livraison")} className="hover:text-gold transition-colors">
                     Livraison
                   </button>
                 </li>
                 <li>
-                  <button className="hover:text-gold transition-colors">
+                  <button onClick={() => goto("service-retours")} className="hover:text-gold transition-colors">
                     Retours
                   </button>
                 </li>
                 <li>
-                  <button className="hover:text-gold transition-colors">
+                  <button onClick={() => goto("service-tailles")} className="hover:text-gold transition-colors">
                     Guide des tailles
                   </button>
                 </li>
                 <li>
-                  <button className="hover:text-gold transition-colors">
+                  <button onClick={() => goto("service-entretien")} className="hover:text-gold transition-colors">
                     Entretien
                   </button>
                 </li>
                 <li>
-                  <button className="hover:text-gold transition-colors">
+                  <button onClick={() => goto("contact")} className="hover:text-gold transition-colors">
                     Contact
                   </button>
                 </li>
@@ -965,14 +1024,14 @@ export default function KalasamSite() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-petrol/10 text-xs text-petrol/50 font-light">
             <p>© 2026 KALASAM — Tous droits réservés.</p>
             <div className="flex gap-6">
-              <button className="hover:text-gold transition-colors">
+              <button onClick={() => goto("legal-mentions")} className="hover:text-gold transition-colors">
                 Mentions légales
               </button>
-              <button className="hover:text-gold transition-colors">CGV</button>
-              <button className="hover:text-gold transition-colors">
+              <button onClick={() => goto("legal-cgv")} className="hover:text-gold transition-colors">CGV</button>
+              <button onClick={() => goto("legal-confidentialite")} className="hover:text-gold transition-colors">
                 Confidentialité
               </button>
-              <button className="hover:text-gold transition-colors">
+              <button onClick={() => goto("legal-cookies")} className="hover:text-gold transition-colors">
                 Cookies
               </button>
             </div>
@@ -1173,16 +1232,16 @@ function HomePage({ onShop, onStory, onProduct, onAdd, onWish }) {
           }}
         />
 
-        {/* Content — centered at bottom */}
+        {/* Content — bottom left */}
         <div
-          className="absolute inset-0 flex flex-col items-center justify-end text-center px-6 pb-16 md:pb-20"
+          className="absolute inset-0 flex flex-col items-start justify-end text-left px-6 lg:px-12 pb-16 md:pb-20 max-w-[1500px] mx-auto w-full"
           style={{ zIndex: 2 }}
         >
           <p className="text-[10px] tracking-[0.45em] uppercase text-gold mb-5 animate-fadeUp" style={{ textShadow: '0 1px 8px rgba(0,0,0,0.4)' }}>
             ✦ Chapitre I — Origines · automne 2026
           </p>
           <h1
-            className="font-display font-light text-cream text-6xl sm:text-7xl md:text-8xl lg:text-[9rem] leading-[0.88] mb-6 animate-fadeUp delay-100"
+            className="font-display font-light text-cream text-4xl md:text-5xl lg:text-6xl leading-[1.1] mb-6 animate-fadeUp delay-100"
             style={{
               fontFamily: '"Cormorant Garamond", serif',
               letterSpacing: '-0.02em',
@@ -2302,8 +2361,79 @@ function ChaptersPage({ onProduct, onAdd, onWish }) {
 /* =========================================================
    ACCOUNT PAGE
    ========================================================= */
-function AccountPage() {
+function AccountPage({ user, setUser, orders, onShop }) {
   const [tab, setTab] = useState("login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+
+  const handleAuth = (e) => {
+    e.preventDefault();
+    if (!email || !password) return;
+    if (tab === "signup" && (!firstName || !lastName)) return;
+    
+    setUser({
+      email,
+      name: tab === "signup" ? `${firstName} ${lastName}` : email.split('@')[0],
+    });
+  };
+
+  const handleLogout = () => setUser(null);
+
+  if (user) {
+    return (
+      <div className="bg-cream min-h-[70vh] py-24 px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
+            <div>
+              <h1 className="font-display text-petrol text-5xl mb-2 font-light" style={{ fontFamily: '"Cormorant Garamond", serif' }}>
+                Bonjour, {user.name}
+              </h1>
+              <p className="text-petrol/60 text-sm font-light">
+                Bienvenue dans votre espace KALASAM.
+              </p>
+            </div>
+            <button onClick={handleLogout} className="border border-petrol/20 px-6 py-2 text-[10px] tracking-[0.3em] uppercase hover:bg-petrol hover:text-cream transition-colors">
+              Se déconnecter
+            </button>
+          </div>
+
+          <div className="bg-sand-light/30 p-8 border border-petrol/10">
+            <h2 className="font-display text-3xl mb-8" style={{ fontFamily: '"Cormorant Garamond", serif' }}>
+              Historique des commandes
+            </h2>
+            {orders.length === 0 ? (
+              <div className="text-center py-12">
+                <Package size={32} className="mx-auto mb-4 text-petrol/30" />
+                <p className="text-sm text-petrol/60 mb-6">Vous n'avez passé aucune commande pour le moment.</p>
+                <button onClick={onShop} className="bg-petrol text-cream px-8 py-3 text-[10px] tracking-[0.3em] uppercase hover:bg-petrol-dark transition-colors">
+                  Découvrir la boutique
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {orders.map(order => (
+                  <div key={order.id} className="border border-petrol/10 bg-cream p-6 flex flex-col md:flex-row justify-between md:items-center gap-6">
+                    <div>
+                      <p className="text-[11px] tracking-[0.2em] uppercase text-petrol/60 mb-1">Commande {order.id}</p>
+                      <p className="font-display text-xl mb-1" style={{ fontFamily: '"Cormorant Garamond", serif' }}>{order.date}</p>
+                      <p className="text-sm text-petrol/80">{order.items.length} article{order.items.length > 1 ? 's' : ''}</p>
+                    </div>
+                    <div className="text-left md:text-right">
+                      <p className="text-gold text-sm mb-1">{order.status}</p>
+                      <p className="font-display text-2xl" style={{ fontFamily: '"Cormorant Garamond", serif' }}>{order.total}€</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-cream min-h-[70vh] py-24 px-6">
       <div className="max-w-md mx-auto">
@@ -2336,17 +2466,23 @@ function AccountPage() {
           ))}
         </div>
 
-        <div className="space-y-5 animate-fadeIn">
+        <form onSubmit={handleAuth} className="space-y-5 animate-fadeIn">
           {tab === "signup" && (
             <>
               <input
                 type="text"
                 placeholder="Prénom"
+                required
+                value={firstName}
+                onChange={e => setFirstName(e.target.value)}
                 className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
               />
               <input
                 type="text"
                 placeholder="Nom"
+                required
+                value={lastName}
+                onChange={e => setLastName(e.target.value)}
                 className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
               />
             </>
@@ -2354,24 +2490,30 @@ function AccountPage() {
           <input
             type="email"
             placeholder="E-mail"
+            required
+            value={email}
+            onChange={e => setEmail(e.target.value)}
             className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
           />
           <input
             type="password"
             placeholder="Mot de passe"
+            required
+            value={password}
+            onChange={e => setPassword(e.target.value)}
             className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
           />
 
-          <button className="w-full bg-petrol text-cream py-4 text-[11px] tracking-[0.3em] uppercase hover:bg-petrol-dark transition-colors mt-8">
+          <button type="submit" className="w-full bg-petrol text-cream py-4 text-[11px] tracking-[0.3em] uppercase hover:bg-petrol-dark transition-colors mt-8">
             {tab === "login" ? "Se connecter" : "Créer mon compte"}
           </button>
 
           {tab === "login" && (
-            <button className="w-full text-center text-xs underline text-petrol/60 hover:text-petrol pt-3">
+            <button type="button" className="w-full text-center text-xs underline text-petrol/60 hover:text-petrol pt-3">
               Mot de passe oublié ?
             </button>
           )}
-        </div>
+        </form>
       </div>
     </div>
   );
@@ -2437,9 +2579,35 @@ function WishlistPage({ products, onProduct, onAdd, onWish, onShop }) {
    CHECKOUT PAGE
    ========================================================= */
 function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
-  const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    email: '',
+    firstName: '',
+    lastName: '',
+    address: '',
+    zip: '',
+    city: '',
+    cardName: '',
+    cardNumber: '',
+    cardExp: '',
+    cardCvc: ''
+  });
+
   const shippingCost = cartTotal >= 200 ? 0 : 12;
   const finalTotal = cartTotal + shippingCost;
+
+  const handleChange = (e) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      onComplete();
+    }, 1500);
+  };
 
   if (cart.length === 0) {
     return (
@@ -2466,6 +2634,7 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
         {/* En-tête Checkout */}
         <div className="mb-12">
           <button
+            type="button"
             onClick={onBack}
             className="flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-petrol/60 hover:text-gold transition-colors mb-6"
           >
@@ -2481,7 +2650,7 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
 
         <div className="grid lg:grid-cols-12 gap-16">
           {/* Colonne Formulaire (Gauche) */}
-          <div className="lg:col-span-7 space-y-12">
+          <form onSubmit={handleSubmit} className="lg:col-span-7 space-y-12">
             {/* Section 1 : Contact */}
             <section>
               <h2 className="text-[11px] tracking-[0.3em] uppercase text-petrol mb-6 border-b border-petrol/10 pb-3">
@@ -2489,6 +2658,10 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
               </h2>
               <input
                 type="email"
+                name="email"
+                required
+                value={formData.email}
+                onChange={handleChange}
                 placeholder="Adresse e-mail"
                 className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
               />
@@ -2502,17 +2675,29 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <input
                   type="text"
+                  name="firstName"
+                  required
+                  value={formData.firstName}
+                  onChange={handleChange}
                   placeholder="Prénom"
                   className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
                 />
                 <input
                   type="text"
+                  name="lastName"
+                  required
+                  value={formData.lastName}
+                  onChange={handleChange}
                   placeholder="Nom"
                   className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
                 />
               </div>
               <input
                 type="text"
+                name="address"
+                required
+                value={formData.address}
+                onChange={handleChange}
                 placeholder="Adresse"
                 className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors mb-4"
               />
@@ -2524,11 +2709,19 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
               <div className="grid grid-cols-3 gap-4 mb-4">
                 <input
                   type="text"
+                  name="zip"
+                  required
+                  value={formData.zip}
+                  onChange={handleChange}
                   placeholder="Code postal"
                   className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
                 />
                 <input
                   type="text"
+                  name="city"
+                  required
+                  value={formData.city}
+                  onChange={handleChange}
                   placeholder="Ville"
                   className="col-span-2 w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
                 />
@@ -2549,12 +2742,20 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
               <div className="bg-sand-light/20 p-6 border border-petrol/10">
                 <input
                   type="text"
+                  name="cardName"
+                  required
+                  value={formData.cardName}
+                  onChange={handleChange}
                   placeholder="Nom sur la carte"
                   className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors mb-4"
                 />
                 <div className="relative mb-4">
                   <input
                     type="text"
+                    name="cardNumber"
+                    required
+                    value={formData.cardNumber}
+                    onChange={handleChange}
                     placeholder="Numéro de carte"
                     className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
                   />
@@ -2570,11 +2771,19 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
                 <div className="grid grid-cols-2 gap-4">
                   <input
                     type="text"
+                    name="cardExp"
+                    required
+                    value={formData.cardExp}
+                    onChange={handleChange}
                     placeholder="MM/AA"
                     className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
                   />
                   <input
                     type="text"
+                    name="cardCvc"
+                    required
+                    value={formData.cardCvc}
+                    onChange={handleChange}
                     placeholder="CVC"
                     className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
                   />
@@ -2583,15 +2792,23 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
             </section>
 
             <button
-              onClick={onComplete}
-              className="w-full bg-petrol text-cream py-5 text-[12px] tracking-[0.3em] uppercase hover:bg-petrol-dark transition-colors mt-8"
+              type="submit"
+              disabled={loading}
+              className="w-full bg-petrol text-cream py-5 text-[12px] tracking-[0.3em] uppercase hover:bg-petrol-dark transition-colors mt-8 disabled:opacity-70 flex justify-center items-center gap-3"
             >
-              Valider la Commande
+              {loading ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-cream border-t-transparent rounded-full animate-spin"></span>
+                  Traitement...
+                </>
+              ) : (
+                "Valider la Commande"
+              )}
             </button>
             <p className="text-[10px] text-petrol/50 text-center font-light tracking-wider mt-4 flex items-center justify-center gap-2">
               <Check size={12} /> Connexion chiffrée & paiement sécurisé
             </p>
-          </div>
+          </form>
 
           {/* Colonne Récapitulatif (Droite) */}
           <div className="lg:col-span-5">
@@ -2656,6 +2873,255 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================
+   MANIFESTO PAGE
+   ========================================================= */
+function ManifestoPage() {
+  return (
+    <div className="bg-cream py-32 px-6">
+      <div className="max-w-4xl mx-auto text-center">
+        <p className="text-[10px] tracking-[0.5em] uppercase text-gold mb-8 animate-fadeUp">
+          Le manifeste
+        </p>
+        <h1
+          className="font-display text-petrol text-5xl md:text-7xl leading-[1.1] mb-12 font-light animate-fadeUp delay-100"
+          style={{ fontFamily: '"Cormorant Garamond", serif' }}
+        >
+          Créer pour <span className="italic">honorer</span>.
+        </h1>
+        <div className="space-y-6 text-petrol/80 font-light leading-relaxed text-lg animate-fadeUp delay-200">
+          <p>
+            KALASAM n'est pas qu'une simple marque de vêtements. C'est une démarche. 
+            Une volonté de transformer l'exil, le silence et l'invisibilité en présence.
+          </p>
+          <p>
+            Nos vêtements ne cachent pas, ils révèlent. Ils racontent des histoires d'ancrage et de mouvement. 
+            Ils honorent celles et ceux qui ont dû tout quitter pour que nous puissions créer aujourd'hui.
+          </p>
+          <p>
+            En portant nos créations, vous ne portez pas seulement un vêtement. Vous portez un fragment d'histoire, un héritage pluriel tissé avec soin et patience.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================
+   ATELIER PAGE
+   ========================================================= */
+function AtelierPage() {
+  return (
+    <div className="bg-sand-light/40 py-32 px-6">
+      <div className="max-w-4xl mx-auto text-center">
+        <p className="text-[10px] tracking-[0.5em] uppercase text-gold mb-8 animate-fadeUp">
+          L'atelier
+        </p>
+        <h1
+          className="font-display text-petrol text-5xl md:text-7xl leading-[1.1] mb-12 font-light animate-fadeUp delay-100"
+          style={{ fontFamily: '"Cormorant Garamond", serif' }}
+        >
+          Pensé et conçu à <span className="italic">Paris</span>.
+        </h1>
+        <div className="space-y-6 text-petrol/80 font-light leading-relaxed text-lg animate-fadeUp delay-200">
+          <p>
+            Notre atelier, situé au cœur de Paris, est le lieu où les mémoires prennent forme.
+            Chaque patron est tracé à la main, chaque prototype est longuement ajusté.
+          </p>
+          <p>
+            Nous privilégions des séries courtes. Pas de surproduction, pas de précipitation. 
+            Nous choisissons des matières qui traversent le temps, en partenariat avec des ateliers français partageant nos valeurs.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================
+   SERVICE PAGE
+   ========================================================= */
+function ServicePage({ initialTab = 'livraison', onShop }) {
+  const [tab, setTab] = useState(initialTab);
+  useEffect(() => { setTab(initialTab); }, [initialTab]);
+
+  return (
+    <div className="bg-cream min-h-[70vh] py-24 px-6 lg:px-12">
+      <div className="max-w-[1000px] mx-auto">
+        <h1 className="font-display text-petrol text-5xl mb-12 font-light text-center" style={{ fontFamily: '"Cormorant Garamond", serif' }}>
+          Service Client
+        </h1>
+        <div className="flex flex-wrap justify-center gap-4 mb-16 border-b border-petrol/20 pb-4">
+          {[
+            { id: 'livraison', label: 'Livraison' },
+            { id: 'retours', label: 'Retours' },
+            { id: 'tailles', label: 'Guide des tailles' },
+            { id: 'entretien', label: 'Entretien' }
+          ].map(t => (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              className={`px-4 py-2 text-[11px] tracking-[0.3em] uppercase transition-colors ${tab === t.id ? 'bg-petrol text-cream' : 'text-petrol/60 hover:text-petrol'}`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="animate-fadeIn">
+          {tab === 'livraison' && (
+            <div className="space-y-4 text-petrol/80 font-light">
+              <h2 className="font-display text-3xl mb-6">Informations de livraison</h2>
+              <p>Livraison standard (3 à 5 jours ouvrés) : 12€ ou offerte dès 200€ d'achats.</p>
+              <p>Livraison express (24 à 48h) : 25€.</p>
+              <p>Toutes nos commandes sont expédiées depuis nos ateliers parisiens via Colissimo ou DHL pour l'international.</p>
+            </div>
+          )}
+          {tab === 'retours' && (
+            <div className="space-y-4 text-petrol/80 font-light">
+              <h2 className="font-display text-3xl mb-6">Politique de retours</h2>
+              <p>Vous disposez d'un délai de 30 jours après réception pour retourner vos articles.</p>
+              <p>Les pièces doivent être dans leur état d'origine, non portées et avec leurs étiquettes.</p>
+              <p>Les frais de retour sont pris en charge pour les commandes en France métropolitaine.</p>
+            </div>
+          )}
+          {tab === 'tailles' && (
+            <div className="space-y-4 text-petrol/80 font-light">
+              <h2 className="font-display text-3xl mb-6">Guide des tailles</h2>
+              <p>Nos vêtements taillent normalement. Nous vous recommandons de prendre votre taille habituelle.</p>
+              <p>Si vous hésitez entre deux tailles, préférez la taille supérieure pour un rendu plus fluide.</p>
+            </div>
+          )}
+          {tab === 'entretien' && (
+            <div className="space-y-4 text-petrol/80 font-light">
+              <h2 className="font-display text-3xl mb-6">Conseils d'entretien</h2>
+              <p>Privilégiez le nettoyage à sec pour préserver la structure de vos vestes et manteaux.</p>
+              <p>Pour les tops et jupes fluides, un lavage à froid à la main est recommandé. Séchage à plat, à l'ombre.</p>
+            </div>
+          )}
+        </div>
+        <div className="mt-16 text-center">
+          <button onClick={onShop} className="border border-petrol px-8 py-3 text-[11px] tracking-[0.3em] uppercase hover:bg-petrol hover:text-cream transition-colors">
+            Retour à la boutique
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================
+   LEGAL PAGE
+   ========================================================= */
+function LegalPage({ initialTab = 'mentions' }) {
+  const [tab, setTab] = useState(initialTab);
+  useEffect(() => { setTab(initialTab); }, [initialTab]);
+
+  return (
+    <div className="bg-cream min-h-[70vh] py-24 px-6 lg:px-12">
+      <div className="max-w-[1000px] mx-auto">
+        <h1 className="font-display text-petrol text-5xl mb-12 font-light text-center" style={{ fontFamily: '"Cormorant Garamond", serif' }}>
+          Informations Légales
+        </h1>
+        <div className="flex flex-wrap justify-center gap-4 mb-16 border-b border-petrol/20 pb-4">
+          {[
+            { id: 'mentions', label: 'Mentions légales' },
+            { id: 'cgv', label: 'CGV' },
+            { id: 'confidentialite', label: 'Confidentialité' },
+            { id: 'cookies', label: 'Cookies' }
+          ].map(t => (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              className={`px-4 py-2 text-[11px] tracking-[0.3em] uppercase transition-colors ${tab === t.id ? 'bg-petrol text-cream' : 'text-petrol/60 hover:text-petrol'}`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="animate-fadeIn space-y-4 text-petrol/80 font-light">
+          {tab === 'mentions' && (
+            <>
+              <h2 className="font-display text-3xl mb-6">Mentions légales</h2>
+              <p>KALASAM SAS au capital de 10 000€</p>
+              <p>Siège social : Paris, France.</p>
+              <p>RCS Paris 123 456 789.</p>
+            </>
+          )}
+          {tab === 'cgv' && (
+            <>
+              <h2 className="font-display text-3xl mb-6">Conditions Générales de Vente</h2>
+              <p>L'achat de nos produits implique l'acceptation pleine et entière de nos conditions générales de vente.</p>
+            </>
+          )}
+          {tab === 'confidentialite' && (
+            <>
+              <h2 className="font-display text-3xl mb-6">Politique de confidentialité</h2>
+              <p>Vos données personnelles sont traitées dans le strict respect de la réglementation RGPD.</p>
+            </>
+          )}
+          {tab === 'cookies' && (
+            <>
+              <h2 className="font-display text-3xl mb-6">Gestion des Cookies</h2>
+              <p>Notre site utilise des cookies essentiels au bon fonctionnement du panier et du compte utilisateur.</p>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================
+   CONTACT PAGE
+   ========================================================= */
+function ContactPage() {
+  const [status, setStatus] = useState("idle");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setStatus("sending");
+    setTimeout(() => setStatus("sent"), 1200);
+  };
+
+  return (
+    <div className="bg-cream py-32 px-6 min-h-[70vh]">
+      <div className="max-w-2xl mx-auto">
+        <div className="text-center mb-16">
+          <p className="text-[10px] tracking-[0.5em] uppercase text-gold mb-4">
+            Nous écrire
+          </p>
+          <h1 className="font-display text-petrol text-5xl font-light" style={{ fontFamily: '"Cormorant Garamond", serif' }}>
+            Contact
+          </h1>
+        </div>
+
+        {status === "sent" ? (
+          <div className="text-center p-12 bg-sand-light/30 border border-petrol/10 animate-fadeIn">
+            <Check size={48} className="mx-auto mb-6 text-gold" />
+            <h2 className="font-display text-3xl mb-4" style={{ fontFamily: '"Cormorant Garamond", serif' }}>Message envoyé</h2>
+            <p className="text-petrol/60 font-light">Nous vous répondrons dans les plus brefs délais.</p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-2 gap-6">
+              <input type="text" placeholder="Prénom" required className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors" />
+              <input type="text" placeholder="Nom" required className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors" />
+            </div>
+            <input type="email" placeholder="E-mail" required className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors" />
+            <input type="text" placeholder="Sujet" className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors" />
+            <textarea placeholder="Votre message" required rows={5} className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors resize-none" />
+            <button type="submit" disabled={status === "sending"} className="w-full bg-petrol text-cream py-4 text-[11px] tracking-[0.3em] uppercase hover:bg-petrol-dark transition-colors disabled:opacity-70 flex justify-center items-center gap-3">
+              {status === "sending" ? "Envoi en cours..." : "Envoyer"}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );
