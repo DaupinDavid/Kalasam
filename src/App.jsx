@@ -23,6 +23,7 @@ import {
   ChevronDown,
   MapPin,
   Phone,
+  Play,
 } from "lucide-react";
 
 /* =========================================================
@@ -85,6 +86,13 @@ const PRODUCTS = [
     description:
       "Robe longue fluide aux drapés naturels. Une silhouette qui voyage, qui s'adapte, qui regarde vers l'avenir sans oublier d'où elle vient.",
     img: "leader.jpeg",
+    gallery: [
+      { type: "image", src: "leader.jpeg" },
+      { type: "image", src: "horizon_dos.jpeg" },
+      { type: "image", src: "horizon_detail.jpeg" },
+      { type: "image", src: "horizon_portee.jpeg" },
+      { type: "video", src: "horizon_runway.mp4" }, // <-- Ta vidéo
+    ],
   },
   {
     id: 2,
@@ -101,6 +109,13 @@ const PRODUCTS = [
     description:
       "Top en soie à coupe asymétrique. Inspiré des marchés colorés de Manille, transformé en une pièce précieuse qui raconte l'histoire d'un voyage.",
     img: "appel.jpeg",
+    gallery: [
+      { type: "image", src: "leader.jpeg" },
+      { type: "image", src: "horizon_dos.jpeg" },
+      { type: "image", src: "horizon_detail.jpeg" },
+      { type: "image", src: "horizon_portee.jpeg" },
+      { type: "video", src: "horizon_runway.mp4" }, // <-- Ta vidéo
+    ],
   },
   {
     id: 3,
@@ -117,6 +132,13 @@ const PRODUCTS = [
     description:
       "Pantalon ample en lin lourd. Référence aux terres du nord du Sri Lanka, une coupe pensée pour ce qui reste quand on est obligé de partir, alliant confort et dignité.",
     img: "regulateur.jpeg",
+    gallery: [
+      { type: "image", src: "regulateur.jpeg" },
+      { type: "image", src: "heirloom_dos.jpeg" },
+      { type: "image", src: "heirloom_detail.jpeg" },
+      { type: "image", src: "heirloom_portee.jpeg" },
+      { type: "video", src: "heirloom_runway.mp4" },
+    ],
   },
   {
     id: 4,
@@ -133,6 +155,13 @@ const PRODUCTS = [
     description:
       "Jupe mi-longue aux ondulations subtiles. Un hommage aux mouvements de la mer et aux rivages qu'il a fallu traverser pour écrire une nouvelle histoire.",
     img: "tactique.jpeg",
+    gallery: [
+      { type: "image", src: "leader.jpeg" },
+      { type: "image", src: "horizon_dos.jpeg" },
+      { type: "image", src: "horizon_detail.jpeg" },
+      { type: "image", src: "horizon_portee.jpeg" },
+      { type: "video", src: "horizon_runway.mp4" }, // <-- Ta vidéo
+    ],
   },
   {
     id: 5,
@@ -149,6 +178,13 @@ const PRODUCTS = [
     description:
       "Veste tailleur structurée à l'épaule construite. Hommage à Bernadette, qui quitta sa province pour rejoindre Boulogne-Billancourt à une époque où peu de femmes osaient franchir ce seuil seules.",
     img: "avenir.jpeg",
+    gallery: [
+      { type: "image", src: "avenir.jpeg" },
+      { type: "image", src: "aube_dos.jpeg" },
+      { type: "image", src: "aube_detail.jpeg" },
+      { type: "image", src: "aube_portee.jpeg" },
+      { type: "video", src: "aube_runway.mp4" },
+    ],
   },
 ];
 
@@ -1113,7 +1149,7 @@ export default function KalasamSite() {
                   <span>{cartTotal + (cartTotal >= 200 ? 0 : 12)}€</span>
                 </div>
                 {/* BOUTON MODIFIÉ ICI 👇 */}
-                <button 
+                <button
                   onClick={() => {
                     setCartOpen(false);
                     goto("checkout");
@@ -1600,11 +1636,20 @@ function ProductPage({ product, onAdd, onWish, onBack, onProduct }) {
   const [size, setSize] = useState(null);
   const [color, setColor] = useState(product.colors[0]);
   const [qty, setQty] = useState(1);
-  const [activeImg, setActiveImg] = useState(0);
+  const [activeMedia, setActiveMedia] = useState(0);
   const [accordion, setAccordion] = useState("story");
 
-  // For visual variety, repeat the image with subtle filters
-  const images = [product.img, product.img, product.img, product.img];
+  // NOUVEAU : Réinitialise l'image, la taille et la couleur quand on change de produit
+  useEffect(() => {
+    setSize(null);
+    setColor(product.colors[0]);
+    setQty(1);
+    setActiveMedia(0);
+    setAccordion("story");
+  }, [product]);
+
+  // On utilise la galerie du produit, ou on crée un tableau par défaut avec l'image principale
+  const mediaList = product.gallery || [{ type: "image", src: product.img }];
 
   const related = PRODUCTS.filter(
     (p) => p.category === product.category && p.id !== product.id,
@@ -1633,35 +1678,64 @@ function ProductPage({ product, onAdd, onWish, onBack, onProduct }) {
 
       <div className="max-w-[1500px] mx-auto px-6 lg:px-12 pb-24">
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-16">
-          {/* Image gallery */}
+          {/* Image/Video gallery */}
           <div className="lg:col-span-7 lg:sticky lg:top-32 lg:self-start">
             <div className="grid grid-cols-12 gap-4">
+              {/* Les miniatures (à gauche) */}
               <div className="hidden md:flex md:col-span-2 flex-col gap-3">
-                {images.map((img, i) => (
+                {mediaList.map((item, i) => (
                   <button
                     key={i}
-                    onClick={() => setActiveImg(i)}
-                    className={`aspect-square overflow-hidden border-2 ${
-                      activeImg === i ? "border-gold" : "border-transparent"
+                    onClick={() => setActiveMedia(i)}
+                    className={`relative aspect-square overflow-hidden border-2 transition-all ${
+                      activeMedia === i
+                        ? "border-gold opacity-100"
+                        : "border-transparent opacity-60 hover:opacity-100"
                     }`}
                   >
+                    {/* Si c'est une vidéo sur la miniature, on force une petite image de fallback ou un fond, 
+                        car mettre une vidéo en miniature consomme trop de ressources. 
+                        Mais pour l'instant on utilise ProductImage (ou une image poster) */}
                     <ProductImage
-                      src={img}
+                      src={item.type === "video" ? product.img : item.src}
                       alt={`${product.name} ${i + 1}`}
                       name={product.name}
                       className="w-full h-full"
                     />
+                    {/* Icône Play par-dessus si c'est une vidéo */}
+                    {item.type === "video" && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-petrol/20">
+                        <Play
+                          size={16}
+                          fill="currentColor"
+                          className="text-cream"
+                        />
+                      </div>
+                    )}
                   </button>
                 ))}
               </div>
+
+              {/* L'affichage principal (à droite) */}
               <div className="col-span-12 md:col-span-10">
-                <div className="aspect-[3/4] relative">
-                  <ProductImage
-                    src={images[activeImg]}
-                    alt={product.name}
-                    name={product.name}
-                    className="w-full h-full"
-                  />
+                <div className="aspect-[3/4] relative bg-sand/10">
+                  {mediaList[activeMedia].type === "video" ? (
+                    <video
+                      src={mediaList[activeMedia].src}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="w-full h-full object-cover animate-fadeIn"
+                    />
+                  ) : (
+                    <ProductImage
+                      src={mediaList[activeMedia].src}
+                      alt={product.name}
+                      name={product.name}
+                      className="w-full h-full animate-fadeIn"
+                    />
+                  )}
                   {product.badge && (
                     <span className="absolute top-6 left-6 bg-cream/90 backdrop-blur px-4 py-1.5 text-[10px] tracking-[0.25em] uppercase text-petrol">
                       {product.badge}
