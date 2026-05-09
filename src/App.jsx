@@ -41,14 +41,7 @@ const SunMark = ({ size = 160, className = "", strokeWidth = 2.2 }) => (
   />
 );
 
-const ManifestoMark = ({ size = 160, className = "" }) => (
-  <img
-    src="logonom_kalasam.png" // ➔ Mets ici le lien vers l'image que tu veux pour le 2ème soleil
-    alt="Logo KALASAM"
-    className={`${className} object-contain`}
-    style={{ width: size, height: "auto" }}
-  />
-);
+// FIX #7 : ManifestoMark supprimé (composant mort, jamais utilisé)
 
 // ---------- Wordmark ----------
 const Wordmark = ({ size = "lg", light = false }) => {
@@ -91,7 +84,7 @@ const PRODUCTS = [
       { type: "image", src: "horizon_dos.jpeg" },
       { type: "image", src: "horizon_detail.jpeg" },
       { type: "image", src: "horizon_portee.jpeg" },
-      { type: "video", src: "horizon_runway.mp4" }, // <-- Ta vidéo
+      { type: "video", src: "horizon_runway.mp4" },
     ],
   },
   {
@@ -114,7 +107,7 @@ const PRODUCTS = [
       { type: "image", src: "horizon_dos.jpeg" },
       { type: "image", src: "horizon_detail.jpeg" },
       { type: "image", src: "horizon_portee.jpeg" },
-      { type: "video", src: "horizon_runway.mp4" }, // <-- Ta vidéo
+      { type: "video", src: "horizon_runway.mp4" },
     ],
   },
   {
@@ -160,7 +153,7 @@ const PRODUCTS = [
       { type: "image", src: "horizon_dos.jpeg" },
       { type: "image", src: "horizon_detail.jpeg" },
       { type: "image", src: "horizon_portee.jpeg" },
-      { type: "video", src: "horizon_runway.mp4" }, // <-- Ta vidéo
+      { type: "video", src: "horizon_runway.mp4" },
     ],
   },
   {
@@ -193,9 +186,13 @@ const CATEGORIES = ["Tout", "Vestes", "Robes", "Hauts", "Pantalons", "Jupes"];
 // ---------- Product image with elegant fallback ----------
 const ProductImage = ({ src, alt, name, className = "" }) => {
   const [errored, setErrored] = useState(false);
+
+  useEffect(() => {
+    setErrored(false);
+  }, [src]);
+
   return (
     <div className={`relative overflow-hidden bg-sand ${className}`}>
-      {/* Always-on elegant fallback */}
       <div
         className="absolute inset-0 flex items-center justify-center"
         style={{
@@ -292,8 +289,13 @@ const ProductCard = ({ product, onOpen, onAdd, onWish }) => (
 // ---------- Main app ----------
 export default function KalasamSite() {
   const [page, setPage] = useState("home");
+
+  // FIX #2 : localStorage supprimé — state React pur
   const [cart, setCart] = useState([]);
   const [wishlist, setWishlist] = useState([]);
+  const [user, setUser] = useState(null);
+  const [orders, setOrders] = useState([]);
+
   const [cartOpen, setCartOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeProduct, setActiveProduct] = useState(null);
@@ -308,6 +310,8 @@ export default function KalasamSite() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [page, activeProduct]);
+
+  // FIX #2 : useEffects localStorage supprimés
 
   const showToast = (msg) => {
     setToast(msg);
@@ -359,8 +363,15 @@ export default function KalasamSite() {
     setPage("product");
   };
 
-  // NOUVELLE FONCTION AJOUTÉE ICI 👇
   const handleCheckoutComplete = () => {
+    const newOrder = {
+      id: "CMD-" + Math.floor(Math.random() * 1000000),
+      date: new Date().toLocaleDateString("fr-FR"),
+      items: cart,
+      total: cartTotal + (cartTotal >= 200 ? 0 : 12),
+      status: "En cours de préparation",
+    };
+    setOrders((prev) => [newOrder, ...prev]);
     setCart([]);
     setPage("success");
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -388,10 +399,12 @@ export default function KalasamSite() {
     return p;
   }, [shopFilter, shopSort, searchQuery]);
 
+  // FIX #4 : goto("contact") navigue désormais vers la ContactPage
   const goto = (newPage) => {
     setPage(newPage);
     setMenuOpen(false);
     setSearchOpen(false);
+    window.scrollTo(0, 0);
     if (newPage !== "product") setActiveProduct(null);
   };
 
@@ -473,22 +486,21 @@ export default function KalasamSite() {
 
         ::selection { background: #C89E4E; color: #1E3F52; }
 
-        input:focus, button:focus { outline: none; }
-        input::placeholder { color: rgba(30,63,82,0.4); }
+input:focus, button:focus { outline: none; }
+input::placeholder { color: rgba(30,63,82,0.4); }
+.newsletter-input::placeholder { color: rgba(250,246,238,0.5) !important; }
 
-        .hero-grain {
-          background-image: radial-gradient(rgba(30,63,82,0.05) 1px, transparent 1px);
-          background-size: 4px 4px;
-        }
+ .hero-grain {
+background-image: radial-gradient(rgba(30,63,82,0.05) 1px, transparent 1px);
+background-size: 4px 4px;
+ }
 
         .deco-rule {
           background: linear-gradient(90deg, transparent, #C89E4E 20%, #C89E4E 80%, transparent);
           height: 1px;
         }
       `}</style>
-
       {/* ---------- TOP UTILITY BAR ---------- */}
-
       <div className="bg-petrol text-cream/90 text-[10px] tracking-[0.25em] uppercase">
         <div className="overflow-hidden whitespace-nowrap py-2.5">
           <div className="marquee">
@@ -509,7 +521,6 @@ export default function KalasamSite() {
           </div>
         </div>
       </div>
-
       {/* ---------- HEADER ---------- */}
       <header className="sticky top-0 z-40 bg-cream/95 backdrop-blur-md border-b border-petrol/10">
         <div className="max-w-[1500px] mx-auto px-6 lg:px-12 py-5 grid grid-cols-3 items-center">
@@ -631,7 +642,6 @@ export default function KalasamSite() {
           </div>
         )}
       </header>
-
       {/* ---------- MOBILE MENU OVERLAY ---------- */}
       {menuOpen && (
         <div className="fixed inset-0 z-50 bg-cream animate-fadeIn">
@@ -666,7 +676,6 @@ export default function KalasamSite() {
           </nav>
         </div>
       )}
-
       {/* ---------- PAGES ---------- */}
       <main>
         {page === "home" && (
@@ -707,7 +716,15 @@ export default function KalasamSite() {
             onWish={toggleWish}
           />
         )}
-        {page === "account" && <AccountPage />}
+        {page === "account" && (
+          <AccountPage
+            user={user}
+            setUser={setUser}
+            orders={orders}
+            onShop={() => goto("shop")}
+          />
+        )}
+        {/* FIX #1 : WishlistPage désormais défini et fonctionnel */}
         {page === "wishlist" && (
           <WishlistPage
             products={PRODUCTS.filter((p) => wishlist.includes(p.id))}
@@ -717,7 +734,6 @@ export default function KalasamSite() {
             onShop={() => goto("shop")}
           />
         )}
-        {/* NOUVELLES PAGES AJOUTÉES ICI 👇 */}
         {page === "checkout" && (
           <CheckoutPage
             cart={cart}
@@ -725,6 +741,17 @@ export default function KalasamSite() {
             onBack={() => goto("shop")}
             onComplete={handleCheckoutComplete}
           />
+        )}
+        {page === "manifesto" && <ManifestoPage />}
+        {page === "atelier" && <AtelierPage />}
+        {page.startsWith("service") && (
+          <ServicePage
+            initialTab={page.split("-")[1]}
+            onShop={() => goto("shop")}
+          />
+        )}
+        {page.startsWith("legal") && (
+          <LegalPage initialTab={page.split("-")[1]} />
         )}
         {page === "success" && (
           <div className="bg-cream min-h-[70vh] flex flex-col items-center justify-center py-24 px-6 text-center animate-fadeIn">
@@ -751,35 +778,41 @@ export default function KalasamSite() {
           </div>
         )}
       </main>
-
-      {/* ---------- NEWSLETTER ---------- */}
-      <section className="bg-petrol text-cream py-24 px-6 lg:px-12 relative overflow-hidden">
+      {/* ---------- NEWSLETTER ---------- */}{" "}
+      <section
+        id="newsletter"
+        className="bg-petrol text-cream py-24 px-6 lg:px-12 relative overflow-hidden min-h-[60vh] flex flex-col justify-center"
+      >
+        {" "}
         <div className="absolute -top-20 -right-20 opacity-20">
-          <SunMark size={400} />
-        </div>
+          <SunMark size={400} />{" "}
+        </div>{" "}
         <div className="max-w-3xl mx-auto text-center relative">
+          {" "}
           <p className="text-[10px] tracking-[0.4em] uppercase text-gold mb-6">
-            Lettre KALASAM
-          </p>
+            Lettre KALASAM{" "}
+          </p>{" "}
           <h2
             className="font-display text-5xl md:text-6xl leading-[1.1] mb-6 italic font-light"
             style={{ fontFamily: '"Cormorant Garamond", serif' }}
           >
-            Recevez nos chapitres avant tout le monde
-          </h2>
+            Recevez nos chapitres avant tout le monde{" "}
+          </h2>{" "}
           <p className="text-cream/70 max-w-xl mx-auto mb-10 leading-relaxed font-light">
             Drops confidentiels, histoires d'atelier, et avant-premières. Une
-            lettre par mois — jamais plus, jamais moins.
-          </p>
+            lettre par mois — jamais plus, jamais moins.{" "}
+          </p>{" "}
           {!emailDone ? (
             <div className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
+              {" "}
               <input
                 type="email"
                 value={emailValue}
                 onChange={(e) => setEmailValue(e.target.value)}
                 placeholder="Votre adresse e-mail"
-                className="flex-1 bg-transparent border border-cream/30 px-5 py-4 text-cream placeholder-cream/40 text-sm tracking-wider focus:border-gold transition-colors"
-              />
+                className="flex-1 bg-transparent border border-cream/30 px-5 py-4 text-cream newsletter-input text-sm tracking-wider focus:border-gold outline-none transition-colors"
+                style={{ color: "#FAF6EE" }}
+              />{" "}
               <button
                 onClick={() => {
                   if (emailValue.includes("@")) {
@@ -789,24 +822,24 @@ export default function KalasamSite() {
                 }}
                 className="bg-gold text-petrol px-8 py-4 text-[11px] tracking-[0.3em] uppercase hover:bg-cream transition-colors font-medium"
               >
-                S'inscrire
-              </button>
+                S'inscrire{" "}
+              </button>{" "}
             </div>
           ) : (
             <div className="flex items-center justify-center gap-3 text-gold animate-fadeIn">
-              <Check size={18} />
+              <Check size={18} />{" "}
               <span className="text-sm tracking-wider">
-                Bienvenue. À très vite.
-              </span>
+                Bienvenue. À très vite.{" "}
+              </span>{" "}
             </div>
-          )}
-        </div>
+          )}{" "}
+        </div>{" "}
       </section>
-
       {/* ---------- FOOTER ---------- */}
       <footer className="bg-cream border-t border-petrol/10">
         <div className="max-w-[1500px] mx-auto px-6 lg:px-12 py-20">
           <div className="grid md:grid-cols-12 gap-12 mb-16">
+            {/* 1. TEXTE DE PRESENTATION */}
             <div className="md:col-span-4">
               <div className="flex items-center gap-3 mb-5">
                 <SunMark size={32} />
@@ -825,6 +858,7 @@ export default function KalasamSite() {
               </p>
             </div>
 
+            {/* 2. COLONNE MAISON RESTAURÉE ! */}
             <div className="md:col-span-2">
               <h4 className="text-[10px] tracking-[0.3em] uppercase text-petrol mb-5 font-medium">
                 Maison
@@ -847,18 +881,25 @@ export default function KalasamSite() {
                   </button>
                 </li>
                 <li>
-                  <button className="hover:text-gold transition-colors">
+                  <button
+                    onClick={() => goto("manifesto")}
+                    className="hover:text-gold transition-colors"
+                  >
                     Le manifeste
                   </button>
                 </li>
                 <li>
-                  <button className="hover:text-gold transition-colors">
+                  <button
+                    onClick={() => goto("atelier")}
+                    className="hover:text-gold transition-colors"
+                  >
                     L'atelier
                   </button>
                 </li>
               </ul>
             </div>
 
+            {/* 3. COLONNE BOUTIQUE (AVEC LES BONNES CATÉGORIES) */}
             <div className="md:col-span-2">
               <h4 className="text-[10px] tracking-[0.3em] uppercase text-petrol mb-5 font-medium">
                 Boutique
@@ -900,50 +941,89 @@ export default function KalasamSite() {
                 <li>
                   <button
                     onClick={() => {
-                      setShopFilter("Manteaux");
+                      setShopFilter("Hauts");
                       goto("shop");
                     }}
                     className="hover:text-gold transition-colors"
                   >
-                    Manteaux
+                    Hauts
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => {
+                      setShopFilter("Pantalons");
+                      goto("shop");
+                    }}
+                    className="hover:text-gold transition-colors"
+                  >
+                    Pantalons
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => {
+                      setShopFilter("Jupes");
+                      goto("shop");
+                    }}
+                    className="hover:text-gold transition-colors"
+                  >
+                    Jupes
                   </button>
                 </li>
               </ul>
             </div>
 
+            {/* 4. COLONNE SERVICE */}
             <div className="md:col-span-2">
               <h4 className="text-[10px] tracking-[0.3em] uppercase text-petrol mb-5 font-medium">
                 Service
               </h4>
               <ul className="space-y-3 text-sm font-light">
                 <li>
-                  <button className="hover:text-gold transition-colors">
+                  <button
+                    onClick={() => goto("service-livraison")}
+                    className="hover:text-gold transition-colors"
+                  >
                     Livraison
                   </button>
                 </li>
                 <li>
-                  <button className="hover:text-gold transition-colors">
+                  <button
+                    onClick={() => goto("service-retours")}
+                    className="hover:text-gold transition-colors"
+                  >
                     Retours
                   </button>
                 </li>
                 <li>
-                  <button className="hover:text-gold transition-colors">
+                  <button
+                    onClick={() => goto("service-tailles")}
+                    className="hover:text-gold transition-colors"
+                  >
                     Guide des tailles
                   </button>
                 </li>
                 <li>
-                  <button className="hover:text-gold transition-colors">
+                  <button
+                    onClick={() => goto("service-entretien")}
+                    className="hover:text-gold transition-colors"
+                  >
                     Entretien
                   </button>
                 </li>
                 <li>
-                  <button className="hover:text-gold transition-colors">
+                  <button
+                    onClick={() => goto("contact")}
+                    className="hover:text-gold transition-colors"
+                  >
                     Contact
                   </button>
                 </li>
               </ul>
             </div>
 
+            {/* 5. COLONNE CONTACT */}
             <div className="md:col-span-2">
               <h4 className="text-[10px] tracking-[0.3em] uppercase text-petrol mb-5 font-medium">
                 Contact
@@ -953,13 +1033,23 @@ export default function KalasamSite() {
                   <MapPin size={13} className="mt-0.5 shrink-0" /> Atelier Paris
                   XIe
                 </li>
-                <li className="flex items-start gap-2">
-                  <Mail size={13} className="mt-0.5 shrink-0" />{" "}
-                  bonjour@kalasam.fr
+                <li>
+                  <a
+                    href="mailto:bonjour@kalasam.fr"
+                    className="flex items-start gap-2 hover:text-gold transition-colors"
+                  >
+                    <Mail size={13} className="mt-0.5 shrink-0" />{" "}
+                    bonjour@kalasam.fr
+                  </a>
                 </li>
-                <li className="flex items-start gap-2">
-                  <Phone size={13} className="mt-0.5 shrink-0" /> +33 1 84 60 22
-                  11
+                <li>
+                  <a
+                    href="tel:+33184602211"
+                    className="flex items-start gap-2 hover:text-gold transition-colors"
+                  >
+                    <Phone size={13} className="mt-0.5 shrink-0" /> +33 1 84 60
+                    22 11
+                  </a>
                 </li>
               </ul>
               <div className="flex gap-3 mt-5">
@@ -971,7 +1061,7 @@ export default function KalasamSite() {
                   <span className="text-[10px]">IG</span>
                 </a>
                 <a
-                  href="#"
+                  href="mailto:bonjour@kalasam.fr"
                   className="w-9 h-9 border border-petrol/20 rounded-full flex items-center justify-center hover:bg-petrol hover:text-cream transition-all"
                   aria-label="E-mail"
                 >
@@ -1005,21 +1095,34 @@ export default function KalasamSite() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-petrol/10 text-xs text-petrol/50 font-light">
             <p>© 2026 KALASAM — Tous droits réservés.</p>
             <div className="flex gap-6">
-              <button className="hover:text-gold transition-colors">
+              <button
+                onClick={() => goto("legal-mentions")}
+                className="hover:text-gold transition-colors"
+              >
                 Mentions légales
               </button>
-              <button className="hover:text-gold transition-colors">CGV</button>
-              <button className="hover:text-gold transition-colors">
+              <button
+                onClick={() => goto("legal-cgv")}
+                className="hover:text-gold transition-colors"
+              >
+                CGV
+              </button>
+              <button
+                onClick={() => goto("legal-confidentialite")}
+                className="hover:text-gold transition-colors"
+              >
                 Confidentialité
               </button>
-              <button className="hover:text-gold transition-colors">
+              <button
+                onClick={() => goto("legal-cookies")}
+                className="hover:text-gold transition-colors"
+              >
                 Cookies
               </button>
             </div>
           </div>
         </div>
       </footer>
-
       {/* ---------- CART DRAWER ---------- */}
       {cartOpen && (
         <div className="fixed inset-0 z-50 flex justify-end">
@@ -1152,7 +1255,6 @@ export default function KalasamSite() {
                   <span>Total</span>
                   <span>{cartTotal + (cartTotal >= 200 ? 0 : 12)}€</span>
                 </div>
-                {/* BOUTON MODIFIÉ ICI 👇 */}
                 <button
                   onClick={() => {
                     setCartOpen(false);
@@ -1170,7 +1272,6 @@ export default function KalasamSite() {
           </div>
         </div>
       )}
-
       {/* ---------- TOAST ---------- */}
       {toast && (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] bg-petrol text-cream px-6 py-3 text-xs tracking-wider animate-fadeIn shadow-lg flex items-center gap-2">
@@ -1187,30 +1288,28 @@ export default function KalasamSite() {
    ========================================================= */
 function HomePage({ onShop, onStory, onProduct, onAdd, onWish }) {
   const featured = PRODUCTS.slice(0, 3);
-  const newest = PRODUCTS.slice(3, 7);
+  // FIX #5 : slice(1, 5) au lieu de slice(3, 7) → retourne bien 4 produits
+  const newest = PRODUCTS.slice(1, 5);
 
   return (
     <>
       {/* ---------- HERO VIDÉO ---------- */}
       <section className="relative h-[calc(100vh-115px)] min-h-[500px] w-full flex items-end overflow-hidden">
-        {/* Vidéo en arrière-plan absolu */}
         <div className="absolute inset-0 z-0 bg-petrol">
+          {/* FIX #8 : muted={true} explicite pour compatibilité navigateurs */}
           <video
             src="./FILMKALASAM.mp4"
             autoPlay
             loop
-            muted
+            muted={true}
             playsInline
             controls
             className="w-full h-full object-cover opacity-90"
           />
-          {/* Overlay dégradé renforcé pour faire ressortir les textes et boutons en bas à gauche */}
           <div className="absolute inset-0 bg-gradient-to-t from-petrol/90 via-petrol/30 to-transparent pointer-events-none md:bg-gradient-to-tr"></div>
         </div>
 
-        {/* Contenu et CTAs superposés (Alignés à gauche) */}
         <div className="relative z-10 max-w-[1500px] w-full mx-auto px-4 lg:px-6 pb-[56px] lg:pb-[75px] pointer-events-none flex flex-col items-start">
-          {/* Slogan (on applique le cliquable "pointer-events-auto" uniquement à ce texte précis) */}
           <h1
             className="font-display font-light text-4xl md:text-5xl leading-[0.9] mb-4 text-cream animate-fadeUp delay-100 pointer-events-auto w-fit"
             style={{
@@ -1221,7 +1320,6 @@ function HomePage({ onShop, onStory, onProduct, onAdd, onWish }) {
             De l'exil <span className="italic opacity-90">à l'identité.</span>
           </h1>
 
-          {/* Boutons d'action (on applique le cliquable "pointer-events-auto" uniquement aux boutons) */}
           <div className="flex flex-col sm:flex-row gap-3 animate-fadeUp delay-300 pointer-events-auto w-fit">
             <button
               onClick={onShop}
@@ -1619,7 +1717,6 @@ function ProductPage({ product, onAdd, onWish, onBack, onProduct }) {
   const [activeMedia, setActiveMedia] = useState(0);
   const [accordion, setAccordion] = useState("story");
 
-  // NOUVEAU : Réinitialise l'image, la taille et la couleur quand on change de produit
   useEffect(() => {
     setSize(null);
     setColor(product.colors[0]);
@@ -1628,16 +1725,15 @@ function ProductPage({ product, onAdd, onWish, onBack, onProduct }) {
     setAccordion("story");
   }, [product]);
 
-  // On utilise la galerie du produit, ou on crée un tableau par défaut avec l'image principale
   const mediaList = product.gallery || [{ type: "image", src: product.img }];
 
+  // FIX #6 : filtre par chapter (pas category) → les suggestions s'affichent enfin
   const related = PRODUCTS.filter(
-    (p) => p.category === product.category && p.id !== product.id,
+    (p) => p.chapter === product.chapter && p.id !== product.id,
   ).slice(0, 4);
 
   const handleAdd = () => {
     if (!size) {
-      // pick a default size if none selected
       onAdd(product, product.sizes[1] || product.sizes[0], color);
     } else {
       for (let i = 0; i < qty; i++) onAdd(product, size, color);
@@ -1673,16 +1769,12 @@ function ProductPage({ product, onAdd, onWish, onBack, onProduct }) {
                         : "border-transparent opacity-60 hover:opacity-100"
                     }`}
                   >
-                    {/* Si c'est une vidéo sur la miniature, on force une petite image de fallback ou un fond, 
-                        car mettre une vidéo en miniature consomme trop de ressources. 
-                        Mais pour l'instant on utilise ProductImage (ou une image poster) */}
                     <ProductImage
                       src={item.type === "video" ? product.img : item.src}
                       alt={`${product.name} ${i + 1}`}
                       name={product.name}
                       className="w-full h-full"
                     />
-                    {/* Icône Play par-dessus si c'est une vidéo */}
                     {item.type === "video" && (
                       <div className="absolute inset-0 flex items-center justify-center bg-petrol/20">
                         <Play
@@ -1704,7 +1796,7 @@ function ProductPage({ product, onAdd, onWish, onBack, onProduct }) {
                       src={mediaList[activeMedia].src}
                       autoPlay
                       loop
-                      muted
+                      muted={true}
                       playsInline
                       className="w-full h-full object-cover animate-fadeIn"
                     />
@@ -2338,10 +2430,178 @@ function ChaptersPage({ onProduct, onAdd, onWish }) {
 }
 
 /* =========================================================
+   WISHLIST PAGE — FIX #1 : composant créé
+   ========================================================= */
+function WishlistPage({ products, onProduct, onAdd, onWish, onShop }) {
+  return (
+    <div className="bg-cream min-h-screen">
+      <div className="max-w-[1500px] mx-auto px-6 lg:px-12 pt-16 pb-32">
+        <div className="text-center mb-16">
+          <p className="text-[10px] tracking-[0.4em] uppercase text-gold mb-4 animate-fadeUp">
+            Mes favoris
+          </p>
+          <h1
+            className="font-display text-petrol text-6xl md:text-8xl leading-tight font-light animate-fadeUp delay-100"
+            style={{ fontFamily: '"Cormorant Garamond", serif' }}
+          >
+            Ma <span className="italic">wishlist</span>
+          </h1>
+          <p className="text-petrol/60 mt-6 max-w-xl mx-auto font-light animate-fadeUp delay-200">
+            {products.length} pièce{products.length !== 1 ? "s" : ""}{" "}
+            sauvegardée{products.length !== 1 ? "s" : ""}.
+          </p>
+        </div>
+
+        {products.length === 0 ? (
+          <div className="text-center py-32">
+            <SunMark size={80} className="mx-auto mb-6 opacity-50" />
+            <p
+              className="font-display text-3xl italic mb-3"
+              style={{ fontFamily: '"Cormorant Garamond", serif' }}
+            >
+              Votre wishlist est vide
+            </p>
+            <p className="text-petrol/60 text-sm font-light mb-10">
+              Ajoutez vos pièces préférées en cliquant sur le cœur.
+            </p>
+            <button
+              onClick={onShop}
+              className="border border-petrol px-10 py-4 text-[11px] tracking-[0.3em] uppercase hover:bg-petrol hover:text-cream transition-all"
+            >
+              Découvrir la boutique
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-10">
+            {products.map((p, i) => (
+              <div
+                key={p.id}
+                className="animate-fadeUp"
+                style={{ animationDelay: `${i * 60}ms` }}
+              >
+                <ProductCard
+                  product={p}
+                  onOpen={onProduct}
+                  onAdd={onAdd}
+                  onWish={onWish}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================
    ACCOUNT PAGE
    ========================================================= */
-function AccountPage() {
+function AccountPage({ user, setUser, orders, onShop }) {
   const [tab, setTab] = useState("login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+
+  // FIX #3 : pas d'event, plus de form
+  const handleAuth = () => {
+    if (!email || !password) return;
+    if (tab === "signup" && (!firstName || !lastName)) return;
+    setUser({
+      email,
+      name: tab === "signup" ? `${firstName} ${lastName}` : email.split("@")[0],
+    });
+  };
+
+  const handleLogout = () => setUser(null);
+
+  if (user) {
+    return (
+      <div className="bg-cream min-h-[70vh] py-24 px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
+            <div>
+              <h1
+                className="font-display text-petrol text-5xl mb-2 font-light"
+                style={{ fontFamily: '"Cormorant Garamond", serif' }}
+              >
+                Bonjour, {user.name}
+              </h1>
+              <p className="text-petrol/60 text-sm font-light">
+                Bienvenue dans votre espace KALASAM.
+              </p>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="border border-petrol/20 px-6 py-2 text-[10px] tracking-[0.3em] uppercase hover:bg-petrol hover:text-cream transition-colors"
+            >
+              Se déconnecter
+            </button>
+          </div>
+
+          <div className="bg-sand-light/30 p-8 border border-petrol/10">
+            <h2
+              className="font-display text-3xl mb-8"
+              style={{ fontFamily: '"Cormorant Garamond", serif' }}
+            >
+              Historique des commandes
+            </h2>
+            {orders.length === 0 ? (
+              <div className="text-center py-12">
+                <Package size={32} className="mx-auto mb-4 text-petrol/30" />
+                <p className="text-sm text-petrol/60 mb-6">
+                  Vous n'avez passé aucune commande pour le moment.
+                </p>
+                <button
+                  onClick={onShop}
+                  className="bg-petrol text-cream px-8 py-3 text-[10px] tracking-[0.3em] uppercase hover:bg-petrol-dark transition-colors"
+                >
+                  Découvrir la boutique
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {orders.map((order) => (
+                  <div
+                    key={order.id}
+                    className="border border-petrol/10 bg-cream p-6 flex flex-col md:flex-row justify-between md:items-center gap-6"
+                  >
+                    <div>
+                      <p className="text-[11px] tracking-[0.2em] uppercase text-petrol/60 mb-1">
+                        Commande {order.id}
+                      </p>
+                      <p
+                        className="font-display text-xl mb-1"
+                        style={{ fontFamily: '"Cormorant Garamond", serif' }}
+                      >
+                        {order.date}
+                      </p>
+                      <p className="text-sm text-petrol/80">
+                        {order.items.length} article
+                        {order.items.length > 1 ? "s" : ""}
+                      </p>
+                    </div>
+                    <div className="text-left md:text-right">
+                      <p className="text-gold text-sm mb-1">{order.status}</p>
+                      <p
+                        className="font-display text-2xl"
+                        style={{ fontFamily: '"Cormorant Garamond", serif' }}
+                      >
+                        {order.total}€
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // FIX #3 : <form> remplacé par <div>, bouton submit → onClick
   return (
     <div className="bg-cream min-h-[70vh] py-24 px-6">
       <div className="max-w-md mx-auto">
@@ -2380,11 +2640,15 @@ function AccountPage() {
               <input
                 type="text"
                 placeholder="Prénom"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
                 className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
               />
               <input
                 type="text"
                 placeholder="Nom"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
                 className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
               />
             </>
@@ -2392,15 +2656,22 @@ function AccountPage() {
           <input
             type="email"
             placeholder="E-mail"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
           />
           <input
             type="password"
             placeholder="Mot de passe"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
           />
 
-          <button className="w-full bg-petrol text-cream py-4 text-[11px] tracking-[0.3em] uppercase hover:bg-petrol-dark transition-colors mt-8">
+          <button
+            onClick={handleAuth}
+            className="w-full bg-petrol text-cream py-4 text-[11px] tracking-[0.3em] uppercase hover:bg-petrol-dark transition-colors mt-8"
+          >
             {tab === "login" ? "Se connecter" : "Créer mon compte"}
           </button>
 
@@ -2416,68 +2687,38 @@ function AccountPage() {
 }
 
 /* =========================================================
-   WISHLIST PAGE
-   ========================================================= */
-function WishlistPage({ products, onProduct, onAdd, onWish, onShop }) {
-  return (
-    <div className="bg-cream min-h-[70vh] py-24 px-6 lg:px-12">
-      <div className="max-w-[1500px] mx-auto">
-        <div className="text-center mb-16">
-          <p className="text-[10px] tracking-[0.4em] uppercase text-gold mb-4">
-            Vos coups de cœur
-          </p>
-          <h1
-            className="font-display text-petrol text-5xl md:text-7xl font-light"
-            style={{ fontFamily: '"Cormorant Garamond", serif' }}
-          >
-            Mes <span className="italic">favoris</span>
-          </h1>
-        </div>
-
-        {products.length === 0 ? (
-          <div className="text-center py-16">
-            <Heart size={48} className="mx-auto mb-6 text-petrol/30" />
-            <p
-              className="font-display text-2xl mb-3 italic"
-              style={{ fontFamily: '"Cormorant Garamond", serif' }}
-            >
-              Votre liste est vide
-            </p>
-            <p className="text-petrol/60 text-sm font-light mb-8">
-              Cliquez sur le cœur des pièces que vous aimez pour les retrouver
-              ici.
-            </p>
-            <button
-              onClick={onShop}
-              className="border border-petrol px-8 py-3 text-[11px] tracking-[0.3em] uppercase hover:bg-petrol hover:text-cream transition-colors"
-            >
-              Voir la boutique
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-10">
-            {products.map((p) => (
-              <ProductCard
-                key={p.id}
-                product={p}
-                onOpen={onProduct}
-                onAdd={onAdd}
-                onWish={onWish}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-/* =========================================================
    CHECKOUT PAGE
    ========================================================= */
 function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
-  const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    firstName: "",
+    lastName: "",
+    address: "",
+    zip: "",
+    city: "",
+    cardName: "",
+    cardNumber: "",
+    cardExp: "",
+    cardCvc: "",
+  });
+
   const shippingCost = cartTotal >= 200 ? 0 : 12;
   const finalTotal = cartTotal + shippingCost;
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  // FIX #3 : pas d'event
+  const handleSubmit = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      onComplete();
+    }, 1500);
+  };
 
   if (cart.length === 0) {
     return (
@@ -2498,10 +2739,10 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
     );
   }
 
+  // FIX #3 : <form> remplacé par <div>, bouton → onClick
   return (
     <div className="bg-cream min-h-screen">
       <div className="max-w-[1500px] mx-auto px-6 lg:px-12 py-12 lg:py-24">
-        {/* En-tête Checkout */}
         <div className="mb-12">
           <button
             onClick={onBack}
@@ -2518,21 +2759,20 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
         </div>
 
         <div className="grid lg:grid-cols-12 gap-16">
-          {/* Colonne Formulaire (Gauche) */}
           <div className="lg:col-span-7 space-y-12">
-            {/* Section 1 : Contact */}
             <section>
               <h2 className="text-[11px] tracking-[0.3em] uppercase text-petrol mb-6 border-b border-petrol/10 pb-3">
                 1. Contact
               </h2>
               <input
                 type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
                 placeholder="Adresse e-mail"
                 className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
               />
             </section>
-
-            {/* Section 2 : Livraison */}
             <section>
               <h2 className="text-[11px] tracking-[0.3em] uppercase text-petrol mb-6 border-b border-petrol/10 pb-3">
                 2. Livraison
@@ -2540,17 +2780,26 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <input
                   type="text"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
                   placeholder="Prénom"
                   className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
                 />
                 <input
                   type="text"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
                   placeholder="Nom"
                   className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
                 />
               </div>
               <input
                 type="text"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
                 placeholder="Adresse"
                 className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors mb-4"
               />
@@ -2562,11 +2811,17 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
               <div className="grid grid-cols-3 gap-4 mb-4">
                 <input
                   type="text"
+                  name="zip"
+                  value={formData.zip}
+                  onChange={handleChange}
                   placeholder="Code postal"
                   className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
                 />
                 <input
                   type="text"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleChange}
                   placeholder="Ville"
                   className="col-span-2 w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
                 />
@@ -2578,8 +2833,6 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
                 <option value="CA">Canada</option>
               </select>
             </section>
-
-            {/* Section 3 : Paiement */}
             <section>
               <h2 className="text-[11px] tracking-[0.3em] uppercase text-petrol mb-6 border-b border-petrol/10 pb-3">
                 3. Paiement
@@ -2587,12 +2840,18 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
               <div className="bg-sand-light/20 p-6 border border-petrol/10">
                 <input
                   type="text"
+                  name="cardName"
+                  value={formData.cardName}
+                  onChange={handleChange}
                   placeholder="Nom sur la carte"
                   className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors mb-4"
                 />
                 <div className="relative mb-4">
                   <input
                     type="text"
+                    name="cardNumber"
+                    value={formData.cardNumber}
+                    onChange={handleChange}
                     placeholder="Numéro de carte"
                     className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
                   />
@@ -2608,23 +2867,36 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
                 <div className="grid grid-cols-2 gap-4">
                   <input
                     type="text"
+                    name="cardExp"
+                    value={formData.cardExp}
+                    onChange={handleChange}
                     placeholder="MM/AA"
                     className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
                   />
                   <input
                     type="text"
+                    name="cardCvc"
+                    value={formData.cardCvc}
+                    onChange={handleChange}
                     placeholder="CVC"
                     className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
                   />
                 </div>
               </div>
             </section>
-
             <button
-              onClick={onComplete}
-              className="w-full bg-petrol text-cream py-5 text-[12px] tracking-[0.3em] uppercase hover:bg-petrol-dark transition-colors mt-8"
+              onClick={handleSubmit}
+              disabled={loading}
+              className="w-full bg-petrol text-cream py-5 text-[12px] tracking-[0.3em] uppercase hover:bg-petrol-dark transition-colors mt-8 disabled:opacity-70 flex justify-center items-center gap-3"
             >
-              Valider la Commande
+              {loading ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-cream border-t-transparent rounded-full animate-spin"></span>{" "}
+                  Traitement...
+                </>
+              ) : (
+                "Valider la Commande"
+              )}
             </button>
             <p className="text-[10px] text-petrol/50 text-center font-light tracking-wider mt-4 flex items-center justify-center gap-2">
               <Check size={12} /> Connexion chiffrée & paiement sécurisé
@@ -2640,7 +2912,6 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
               >
                 Résumé de la commande
               </h3>
-
               <div className="space-y-4 mb-6 max-h-[40vh] overflow-y-auto pr-2">
                 {cart.map((item, i) => (
                   <div key={i} className="flex gap-4">
@@ -2666,7 +2937,6 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
                   </div>
                 ))}
               </div>
-
               <div className="border-t border-petrol/10 pt-4 space-y-3 text-sm font-light">
                 <div className="flex justify-between">
                   <span>Sous-total</span>
@@ -2679,7 +2949,6 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
                   </span>
                 </div>
               </div>
-
               <div className="border-t border-petrol/10 pt-4 mt-4 flex justify-between items-end">
                 <span className="text-[11px] tracking-[0.2em] uppercase text-petrol/60">
                   Total (TTC)
@@ -2694,6 +2963,313 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================
+   MANIFESTO PAGE
+   ========================================================= */
+function ManifestoPage() {
+  return (
+    <div className="bg-cream py-32 px-6">
+      <div className="max-w-4xl mx-auto text-center">
+        <p className="text-[10px] tracking-[0.5em] uppercase text-gold mb-8 animate-fadeUp">
+          Le manifeste
+        </p>
+        <h1
+          className="font-display text-petrol text-5xl md:text-7xl leading-[1.1] mb-12 font-light animate-fadeUp delay-100"
+          style={{ fontFamily: '"Cormorant Garamond", serif' }}
+        >
+          Créer pour <span className="italic">honorer</span>.
+        </h1>
+        <div className="space-y-6 text-petrol/80 font-light leading-relaxed text-lg animate-fadeUp delay-200">
+          <p>
+            KALASAM n'est pas qu'une simple marque de vêtements. C'est une
+            démarche. Une volonté de transformer l'exil, le silence et
+            l'invisibilité en présence.
+          </p>
+          <p>
+            Nos vêtements ne cachent pas, ils révèlent. Ils racontent des
+            histoires d'ancrage et de mouvement. Ils honorent celles et ceux qui
+            ont dû tout quitter pour que nous puissions créer aujourd'hui.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================
+   ATELIER PAGE
+   ========================================================= */
+function AtelierPage() {
+  return (
+    <div className="bg-sand-light/40 py-32 px-6">
+      <div className="max-w-4xl mx-auto text-center">
+        <p className="text-[10px] tracking-[0.5em] uppercase text-gold mb-8 animate-fadeUp">
+          L'atelier
+        </p>
+        <h1
+          className="font-display text-petrol text-5xl md:text-7xl leading-[1.1] mb-12 font-light animate-fadeUp delay-100"
+          style={{ fontFamily: '"Cormorant Garamond", serif' }}
+        >
+          Pensé et conçu à <span className="italic">Paris</span>.
+        </h1>
+        <div className="space-y-6 text-petrol/80 font-light leading-relaxed text-lg animate-fadeUp delay-200">
+          <p>
+            Notre atelier, situé au cœur de Paris, est le lieu où les mémoires
+            prennent forme. Chaque patron est tracé à la main, chaque prototype
+            est longuement ajusté.
+          </p>
+          <p>
+            Nous privilégions des séries courtes. Pas de surproduction, pas de
+            précipitation.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================
+   SERVICE PAGE
+   ========================================================= */
+function ServicePage({ initialTab = "livraison", onShop }) {
+  const [tab, setTab] = useState(initialTab);
+  useEffect(() => {
+    setTab(initialTab);
+  }, [initialTab]);
+
+  return (
+    <div className="bg-cream min-h-[70vh] py-24 px-6 lg:px-12">
+      <div className="max-w-[1000px] mx-auto">
+        <h1
+          className="font-display text-petrol text-5xl mb-12 font-light text-center"
+          style={{ fontFamily: '"Cormorant Garamond", serif' }}
+        >
+          Service Client
+        </h1>
+        <div className="flex flex-wrap justify-center gap-4 mb-16 border-b border-petrol/20 pb-4">
+          {[
+            { id: "livraison", label: "Livraison" },
+            { id: "retours", label: "Retours" },
+            { id: "tailles", label: "Guide des tailles" },
+            { id: "entretien", label: "Entretien" },
+          ].map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              className={`px-4 py-2 text-[11px] tracking-[0.3em] uppercase transition-colors ${tab === t.id ? "bg-petrol text-cream" : "text-petrol/60 hover:text-petrol"}`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+        <div className="animate-fadeIn">
+          {tab === "livraison" && (
+            <div className="space-y-4 text-petrol/80 font-light">
+              <h2 className="font-display text-3xl mb-6">
+                Informations de livraison
+              </h2>
+              <p>
+                Livraison standard (3 à 5 jours ouvrés) : 12€ ou offerte dès
+                200€ d'achats.
+              </p>
+            </div>
+          )}
+          {tab === "retours" && (
+            <div className="space-y-4 text-petrol/80 font-light">
+              <h2 className="font-display text-3xl mb-6">
+                Politique de retours
+              </h2>
+              <p>
+                Vous disposez d'un délai de 30 jours après réception pour
+                retourner vos articles.
+              </p>
+            </div>
+          )}
+          {tab === "tailles" && (
+            <div className="space-y-4 text-petrol/80 font-light">
+              <h2 className="font-display text-3xl mb-6">Guide des tailles</h2>
+              <p>
+                Nos vêtements taillent normalement. Nous vous recommandons de
+                prendre votre taille habituelle.
+              </p>
+            </div>
+          )}
+          {tab === "entretien" && (
+            <div className="space-y-4 text-petrol/80 font-light">
+              <h2 className="font-display text-3xl mb-6">
+                Conseils d'entretien
+              </h2>
+              <p>
+                Privilégiez le nettoyage à sec pour préserver la structure de
+                vos vestes et manteaux.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================
+   LEGAL PAGE
+   ========================================================= */
+function LegalPage({ initialTab = "mentions" }) {
+  const [tab, setTab] = useState(initialTab);
+  useEffect(() => {
+    setTab(initialTab);
+  }, [initialTab]);
+
+  return (
+    <div className="bg-cream min-h-[70vh] py-24 px-6 lg:px-12">
+      <div className="max-w-[1000px] mx-auto">
+        <h1
+          className="font-display text-petrol text-5xl mb-12 font-light text-center"
+          style={{ fontFamily: '"Cormorant Garamond", serif' }}
+        >
+          Informations Légales
+        </h1>
+        <div className="flex flex-wrap justify-center gap-4 mb-16 border-b border-petrol/20 pb-4">
+          {[
+            { id: "mentions", label: "Mentions légales" },
+            { id: "cgv", label: "CGV" },
+            { id: "confidentialite", label: "Confidentialité" },
+            { id: "cookies", label: "Cookies" },
+          ].map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              className={`px-4 py-2 text-[11px] tracking-[0.3em] uppercase transition-colors ${tab === t.id ? "bg-petrol text-cream" : "text-petrol/60 hover:text-petrol"}`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+        <div className="animate-fadeIn space-y-4 text-petrol/80 font-light">
+          {tab === "mentions" && (
+            <>
+              <h2 className="font-display text-3xl mb-6">Mentions légales</h2>
+              <p>KALASAM SAS au capital de 10 000€</p>
+            </>
+          )}
+          {tab === "cgv" && (
+            <>
+              <h2 className="font-display text-3xl mb-6">
+                Conditions Générales de Vente
+              </h2>
+              <p>
+                L'achat de nos produits implique l'acceptation pleine et entière
+                de nos conditions générales de vente.
+              </p>
+            </>
+          )}
+          {tab === "confidentialite" && (
+            <>
+              <h2 className="font-display text-3xl mb-6">
+                Politique de confidentialité
+              </h2>
+              <p>
+                Vos données personnelles sont traitées dans le strict respect de
+                la réglementation RGPD.
+              </p>
+            </>
+          )}
+          {tab === "cookies" && (
+            <>
+              <h2 className="font-display text-3xl mb-6">
+                Gestion des Cookies
+              </h2>
+              <p>
+                Notre site utilise des cookies essentiels au bon fonctionnement
+                du panier et du compte utilisateur.
+              </p>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================
+   CONTACT PAGE
+   ========================================================= */
+function ContactPage() {
+  const [status, setStatus] = useState("idle");
+
+  // FIX #3 : pas d'event
+  const handleSubmit = () => {
+    setStatus("sending");
+    setTimeout(() => setStatus("sent"), 1200);
+  };
+
+  // FIX #3 : <form> remplacé par <div>, bouton → onClick
+  return (
+    <div className="bg-cream py-32 px-6 min-h-[70vh]" id="footer-contact">
+      <div className="max-w-2xl mx-auto">
+        <div className="text-center mb-16">
+          <p className="text-[10px] tracking-[0.5em] uppercase text-gold mb-4">
+            Nous écrire
+          </p>
+          <h1
+            className="font-display text-petrol text-5xl font-light"
+            style={{ fontFamily: '"Cormorant Garamond", serif' }}
+          >
+            Contact
+          </h1>
+        </div>
+
+        {status === "sent" ? (
+          <div className="text-center p-12 bg-sand-light/30 border border-petrol/10 animate-fadeIn">
+            <Check size={48} className="mx-auto mb-6 text-gold" />
+            <h2
+              className="font-display text-3xl mb-4"
+              style={{ fontFamily: '"Cormorant Garamond", serif' }}
+            >
+              Message envoyé
+            </h2>
+            <p className="text-petrol/60 font-light">
+              Nous vous répondrons dans les plus brefs délais.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 gap-6">
+              <input
+                type="text"
+                placeholder="Prénom"
+                className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
+              />
+              <input
+                type="text"
+                placeholder="Nom"
+                className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
+              />
+            </div>
+            <input
+              type="email"
+              placeholder="E-mail"
+              className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
+            />
+            <textarea
+              placeholder="Votre message"
+              rows={5}
+              className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors resize-none"
+            />
+            <button
+              onClick={handleSubmit}
+              disabled={status === "sending"}
+              className="w-full bg-petrol text-cream py-4 text-[11px] tracking-[0.3em] uppercase hover:bg-petrol-dark transition-colors disabled:opacity-70 flex justify-center items-center gap-3"
+            >
+              {status === "sending" ? "Envoi en cours..." : "Envoyer"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
