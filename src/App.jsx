@@ -531,16 +531,18 @@ export default function KalasamSite() {
         }
       `}</style>
       {/* ---------- CLIENTELING PT. 1: CONSEILLER VIP FLOATING BUTTON ---------- */}
-      <button
-        onClick={() => setChatOpen(true)}
-        className="fixed bottom-6 right-6 z-[60] bg-petrol text-cream p-4 rounded-full shadow-2xl hover:bg-gold hover:text-petrol transition-all duration-300 group flex items-center justify-center"
-        aria-label="Contacter un conseiller VIP"
-      >
-        <MessageCircle size={22} />
-        <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-500 ease-in-out whitespace-nowrap text-[10px] tracking-[0.2em] uppercase font-medium group-hover:ml-3 group-hover:mr-1">
-          Conseiller Privé
-        </span>
-      </button>
+      {!chatOpen && (
+        <button
+          onClick={() => setChatOpen(true)}
+          className="fixed bottom-6 right-6 z-[60] bg-petrol text-cream p-4 rounded-full shadow-2xl hover:bg-gold hover:text-petrol transition-all duration-300 group flex items-center justify-center"
+          aria-label="Contacter un conseiller VIP"
+        >
+          <MessageCircle size={22} />
+          <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-500 ease-in-out whitespace-nowrap text-[10px] tracking-[0.2em] uppercase font-medium group-hover:ml-3 group-hover:mr-1">
+            Conseiller Privé
+          </span>
+        </button>
+      )}
       {/* ---------- TOP UTILITY BAR ---------- */}
       <div className="bg-petrol text-cream/90 text-[10px] tracking-[0.25em] uppercase">
         <div className="overflow-hidden whitespace-nowrap py-2.5">
@@ -563,7 +565,9 @@ export default function KalasamSite() {
         </div>
       </div>
       {/* ---------- HEADER ---------- */}
-      <header className="sticky top-0 z-40 bg-cream/95 backdrop-blur-md border-b border-petrol/10">
+      <header
+        className={`sticky top-0 z-40 bg-cream/95 backdrop-blur-md ${page !== "home" ? "border-b border-petrol/10" : ""}`}
+      >
         <div className="max-w-[1500px] mx-auto px-6 lg:px-12 py-5 flex items-center justify-between">
           {/* 1. GAUCHE : Menu Mobile & Logo */}
           <div className="flex items-center gap-4 w-1/3 justify-start">
@@ -1911,7 +1915,14 @@ function ShopPage({
 /* =========================================================
    PRODUCT PAGE (MERCHANDISING PT. 2)
    ========================================================= */
-function ProductPage({ product, onAdd, onWish, onBack, onProduct, onBookAppointment }) {
+function ProductPage({
+  product,
+  onAdd,
+  onWish,
+  onBack,
+  onProduct,
+  onBookAppointment,
+}) {
   const [size, setSize] = useState(null);
   const [color, setColor] = useState(product.colors[0]);
   const [qty, setQty] = useState(1);
@@ -1997,7 +2008,7 @@ function ProductPage({ product, onAdd, onWish, onBack, onProduct, onBookAppointm
               {mediaList.map((m, i) => (
                 <button
                   key={i}
-                  onClick={onBookAppointment}
+                  onClick={() => setActiveMedia(i)}
                   className={`aspect-[3/4] border-2 transition-all ${activeMedia === i ? "border-gold" : "border-transparent opacity-60"}`}
                 >
                   <img
@@ -2146,7 +2157,7 @@ function ProductPage({ product, onAdd, onWish, onBack, onProduct, onBookAppointm
             </div>
 
             <button
-              onClick={() => window.open("https://calendly.com/", "_blank")}
+              onClick={onBookAppointment}
               className="w-full flex items-center justify-center gap-3 border border-gold/40 text-petrol bg-sand-light/10 h-12 text-[10px] tracking-[0.2em] uppercase hover:bg-gold hover:text-cream transition-colors mb-10 group"
             >
               <Calendar
