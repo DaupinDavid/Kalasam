@@ -70,7 +70,7 @@ const PRODUCTS = [
     id: 1,
     name: "Horizon",
     category: "Robes",
-    price: 12500,
+    price: 7800,
     colors: [
       { name: "Pétrole", hex: "#1E3F52" },
       { name: "Sable", hex: "#D2BD9C" },
@@ -83,17 +83,17 @@ const PRODUCTS = [
     img: "leader.jpeg",
     gallery: [
       { type: "image", src: "leader.jpeg" },
-      { type: "image", src: "horizon_dos.jpeg" },
-      { type: "image", src: "horizon_detail.jpeg" },
-      { type: "image", src: "horizon_portee.jpeg" },
-      { type: "video", src: "horizon_runway.mp4" },
+      { type: "image", src: "Image1.png" },
+      { type: "image", src: "Image2.png" },
+      { type: "image", src: "Image3.png" },
+      { type: "video", src: "robe_video.mp4" },
     ],
   },
   {
     id: 2,
     name: "Diaspora",
     category: "Hauts",
-    price: 1500,
+    price: 1200,
     colors: [
       { name: "Crème", hex: "#F4ECDB" },
       { name: "Pétrole", hex: "#1E3F52" },
@@ -105,18 +105,18 @@ const PRODUCTS = [
       "Top en soie à coupe asymétrique. Inspiré des marchés colorés de Manille, transformé en une pièce précieuse qui raconte l'histoire d'un voyage.",
     img: "appel.jpeg",
     gallery: [
-      { type: "image", src: "leader.jpeg" },
-      { type: "image", src: "horizon_dos.jpeg" },
-      { type: "image", src: "horizon_detail.jpeg" },
-      { type: "image", src: "horizon_portee.jpeg" },
-      { type: "video", src: "horizon_runway.mp4" },
+      { type: "image", src: "appel.jpeg" },
+      { type: "image", src: "appel.jpeg" },
+      { type: "image", src: "appel.jpeg" },
+      { type: "image", src: "appel.jpeg" },
+      { type: "video", src: "appel.mp4" },
     ],
   },
   {
     id: 3,
     name: "Héritage",
     category: "Pantalons",
-    price: 3800,
+    price: 2300,
     colors: [
       { name: "Ivoire", hex: "#F8F4ED" },
       { name: "Turquoise", hex: "#51B0AD" },
@@ -129,17 +129,17 @@ const PRODUCTS = [
     img: "regulateur.jpeg",
     gallery: [
       { type: "image", src: "regulateur.jpeg" },
-      { type: "image", src: "heirloom_dos.jpeg" },
-      { type: "image", src: "heirloom_detail.jpeg" },
-      { type: "image", src: "heirloom_portee.jpeg" },
-      { type: "video", src: "heirloom_runway.mp4" },
+      { type: "image", src: "pantalon_dos.png" },
+      { type: "image", src: "pantalon_droite.png" },
+      { type: "image", src: "regulateur.jpeg" },
+      { type: "video", src: "pantalon_video.mp4" },
     ],
   },
   {
     id: 4,
     name: "Vague",
     category: "Jupes",
-    price: 2400,
+    price: 2800,
     colors: [
       { name: "Sable", hex: "#D2BD9C" },
       { name: "Blanc", hex: "#FFFFFF" },
@@ -151,18 +151,18 @@ const PRODUCTS = [
       "Jupe mi-longue aux ondulations subtiles. Un hommage aux mouvements de la mer et aux rivages qu'il a fallu traverser pour écrire une nouvelle histoire.",
     img: "tactique.jpeg",
     gallery: [
-      { type: "image", src: "leader.jpeg" },
-      { type: "image", src: "horizon_dos.jpeg" },
-      { type: "image", src: "horizon_detail.jpeg" },
-      { type: "image", src: "horizon_portee.jpeg" },
-      { type: "video", src: "horizon_runway.mp4" },
+      { type: "image", src: "tactique.jpeg" },
+      { type: "image", src: "vague_dos.png" },
+      { type: "image", src: "vague_gauche.png" },
+      { type: "image", src: "tactique.jpeg" },
+      { type: "video", src: "Croctop_Jupe.mp4" },
     ],
   },
   {
     id: 5,
     name: "Aube",
     category: "Vestes",
-    price: 7200,
+    price: 5200,
     colors: [
       { name: "Sable", hex: "#D2BD9C" },
       { name: "Pétrole", hex: "#1E3F52" },
@@ -175,10 +175,10 @@ const PRODUCTS = [
     img: "avenir.jpeg",
     gallery: [
       { type: "image", src: "avenir.jpeg" },
-      { type: "image", src: "aube_dos.jpeg" },
-      { type: "image", src: "aube_detail.jpeg" },
-      { type: "image", src: "aube_portee.jpeg" },
-      { type: "video", src: "aube_runway.mp4" },
+      { type: "image", src: "blazzer_dos.png" },
+      { type: "image", src: "blazzer_gauche.png" },
+      { type: "image", src: "avenir.jpeg" },
+      { type: "video", src: "blazzer_video.mp4" },
     ],
   },
 ];
@@ -2003,21 +2003,27 @@ function ProductPage({
       <div className="max-w-[1500px] mx-auto px-6 lg:px-12 pb-24">
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-16">
           {/* MEDIA (AVEC ZOOM INTÉGRÉ) */}
-          <div className="lg:col-span-7 lg:sticky lg:top-32 lg:self-start z-10 flex gap-4">
-            <div className="hidden md:flex flex-col gap-3 w-20">
+          <div className="lg:col-span-7 lg:sticky lg:top-32 lg:self-start z-10 flex gap-4 h-[60vh] lg:h-[calc(100vh-160px)]">
+            <div
+              className="hidden md:flex flex-col gap-3 w-20 overflow-y-auto pb-4"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            >
               {mediaList.map((m, i) => (
                 <button
                   key={i}
-                  onClick={() => setActiveMedia(i)}
-                  className={`aspect-[3/4] border-2 transition-all ${activeMedia === i ? "border-gold" : "border-transparent opacity-60"}`}
+                  type="button"
+                  /* CORRECTION 1 : e.preventDefault() assure que le clic fonctionne à tous les coups */
+                  onClick={(e) => { e.preventDefault(); setActiveMedia(i); }}
+                  /* Ajout de 'relative z-20' pour s'assurer que le bouton capte bien la souris */
+                  className={`relative z-20 shrink-0 aspect-[3/4] border-2 transition-all ${activeMedia === i ? "border-gold opacity-100" : "border-transparent opacity-60 hover:opacity-100"}`}
                 >
                   <img
                     src={m.type === "video" ? product.img : m.src}
                     alt=""
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover pointer-events-none"
                   />
                   {m.type === "video" && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-petrol/20">
+                    <div className="absolute inset-0 flex items-center justify-center bg-petrol/20 pointer-events-none">
                       <Play
                         size={16}
                         fill="currentColor"
@@ -2028,26 +2034,30 @@ function ProductPage({
                 </button>
               ))}
             </div>
-            <div className="flex-1 aspect-[3/4] relative bg-sand/10 border border-petrol/10">
-              {mediaList[activeMedia].type === "video" ? (
-                <video
-                  src={mediaList[activeMedia].src}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="w-full h-full object-cover animate-fadeIn"
-                />
-              ) : (
-                <ZoomableImage
-                  src={mediaList[activeMedia].src}
-                  alt={product.name}
-                  className="w-full h-full animate-fadeIn"
-                />
-              )}
+
+            {/* CORRECTION 2 : On retire le fond et la bordure du conteneur extérieur, et on aligne l'image près des miniatures (justify-start) */}
+            <div className="flex-1 flex justify-start items-center relative">
+              {/* C'est ce conteneur interne (qui a la forme de l'image) qui porte le fond et la bordure ! */}
+              <div className="h-full aspect-[3/4] relative bg-sand/10 border border-petrol/10 overflow-hidden">
+                {mediaList[activeMedia].type === "video" ? (
+                  <video
+                    src={mediaList[activeMedia].src}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover animate-fadeIn"
+                  />
+                ) : (
+                  <ZoomableImage
+                    src={mediaList[activeMedia].src}
+                    alt={product.name}
+                    className="w-full h-full animate-fadeIn"
+                  />
+                )}
+              </div>
             </div>
           </div>
-
           {/* DETAILS */}
           <div className="lg:col-span-5 pt-4">
             <p className="text-[10px] tracking-[0.4em] uppercase text-gold mb-2">
