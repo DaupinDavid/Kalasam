@@ -97,7 +97,8 @@ const PRODUCTS = [
     price: 1200,
     colors: [
       { name: "Crème", hex: "#F4ECDB" },
-      { name: "Pétrole", hex: "#1E3F52" },
+      { name: "Noir", hex: "#000000" },
+      { name: "Rouge", hex: "#B22222" },
     ],
     sizes: ["XS", "S", "M", "L"],
     badge: "Nouveauté",
@@ -121,6 +122,8 @@ const PRODUCTS = [
     colors: [
       { name: "Ivoire", hex: "#F8F4ED" },
       { name: "Turquoise", hex: "#51B0AD" },
+      { name: "Blanc", hex: "#FFFFFF" },
+      { name: "Noir", hex: "#000000" },
     ],
     sizes: ["XS", "S", "M", "L", "XL"],
     badge: "Nouveauté",
@@ -166,7 +169,9 @@ const PRODUCTS = [
     price: 5200,
     colors: [
       { name: "Sable", hex: "#D2BD9C" },
-      { name: "Pétrole", hex: "#1E3F52" },
+      { name: "Ivoire", hex: "#F8F4ED" },
+      { name: "Turquoise", hex: "#51B0AD" },
+      { name: "Noir", hex: "#000000" },
     ],
     sizes: ["XS", "S", "M", "L", "XL"],
     badge: "Nouveauté",
@@ -324,6 +329,7 @@ const ProductCard = ({ product, onOpen, onAdd, onWish }) => {
 
 // ---------- Main app ----------
 export default function KalasamSite() {
+  const { t } = useTranslation();
   const [page, setPage] = useState("home");
   const [cart, setCart] = useState([]);
   const [wishlist, setWishlist] = useState([]);
@@ -677,7 +683,7 @@ export default function KalasamSite() {
                 autoFocus
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Rechercher une pièce, une catégorie, un chapitre..."
+                placeholder={t('nav.search')}
                 className="flex-1 bg-transparent border-0 text-petrol font-display text-2xl tracking-wide"
                 style={{ fontFamily: '"Cormorant Garamond", serif' }}
                 onKeyDown={(e) => {
@@ -773,7 +779,7 @@ export default function KalasamSite() {
                            {" "}
               <input
                 type="email"
-                placeholder="E-mail"
+                placeholder={t('form.email')}
                 className="w-full border-b border-petrol/30 bg-transparent py-3 text-sm focus:border-gold outline-none"
               />
                            {" "}
@@ -862,7 +868,7 @@ export default function KalasamSite() {
                                {" "}
                 <input
                   type="text"
-                  placeholder="Écrivez votre message..."
+                  placeholder={t('chat.placeholder')}
                   className="w-full bg-sand-light/30 border border-petrol/20 px-4 py-3 text-sm focus:border-gold outline-none rounded-full pr-12"
                 />
                                {" "}
@@ -1015,7 +1021,7 @@ export default function KalasamSite() {
                 type="email"
                 value={emailValue}
                 onChange={(e) => setEmailValue(e.target.value)}
-                placeholder="Votre adresse e-mail"
+                placeholder={t('form.email')}
                 className="flex-1 bg-transparent border border-cream/30 px-5 py-4 text-cream newsletter-input text-sm tracking-wider focus:border-gold outline-none transition-colors"
                 style={{ color: "#FAF6EE" }}
               />
@@ -1445,11 +1451,11 @@ export default function KalasamSite() {
             {cart.length > 0 && (
               <div className="border-t border-petrol/10 p-6 space-y-4 bg-sand-light/40">
                 <div className="flex justify-between text-sm font-light">
-                  <span>Sous-total</span>
+                  <span>{t('cart.subtotal')}</span>
                   <span>{cartTotal}€</span>
                 </div>
                 <div className="flex justify-between text-sm font-light">
-                  <span>Livraison</span>
+                  <span>{t('footer.shipping')}</span>
                   <span className="text-gold">
                     {cartTotal >= 200 ? "Offerte" : "12€"}
                   </span>
@@ -1458,7 +1464,7 @@ export default function KalasamSite() {
                   className="flex justify-between font-display text-2xl pt-3 border-t border-petrol/10"
                   style={{ fontFamily: '"Cormorant Garamond", serif' }}
                 >
-                  <span>Total</span>
+                  <span>{t('cart.total')}</span>
                   <span>{cartTotal + (cartTotal >= 200 ? 0 : 12)}€</span>
                 </div>
                 <button
@@ -1754,7 +1760,7 @@ function HomePage({ onShop, onStory, onProduct, onAdd, onWish }) {
                 className="font-display text-petrol text-5xl md:text-6xl leading-[1.05] mb-6 font-light"
                 style={{ fontFamily: '"Cormorant Garamond", serif' }}
               >
-                <span className="italic">Mémoire</span>
+                <span className="italic">{t('section.memory')}</span>
                 <br />
                 en mouvement
               </h2>
@@ -1802,6 +1808,7 @@ function ShopPage({
   onAdd,
   onWish,
 }) {
+  const { t } = useTranslation();
   const [showFilters, setShowFilters] = useState(false);
   return (
     <div className="bg-cream min-h-screen">
@@ -1855,9 +1862,9 @@ function ShopPage({
               onChange={(e) => setSort(e.target.value)}
               className="bg-transparent border border-petrol/20 px-3 py-2 text-xs tracking-wider cursor-pointer"
             >
-              <option value="newest">Plus récents</option>
-              <option value="price-asc">Prix croissant</option>
-              <option value="price-desc">Prix décroissant</option>
+              <option value="newest">{t('shop.sortNewest')}</option>
+              <option value="price-asc">{t('shop.sortAsc')}</option>
+              <option value="price-desc">{t('shop.sortDesc')}</option>
             </select>
           </div>
         </div>
@@ -1930,6 +1937,7 @@ function ProductPage({
   onProduct,
   onBookAppointment,
 }) {
+  const { t } = useTranslation();
   const [size, setSize] = useState(null);
   const [color, setColor] = useState(product.colors[0]);
   const [qty, setQty] = useState(1);
@@ -1992,7 +2000,7 @@ function ProductPage({
             className="bg-petrol text-cream px-8 py-3 text-[10px] tracking-[0.3em] uppercase hover:bg-gold transition-colors flex items-center gap-2"
           >
             <ShoppingBag size={14} />{" "}
-            <span className="hidden sm:inline">Ajouter au panier</span>
+            <span className="hidden sm:inline">{t('product.addToCart')}</span>
           </button>
         </div>
       )}
@@ -2291,6 +2299,7 @@ function ProductPage({
    STORY PAGE
    ========================================================= */
 function StoryPage({ onShop }) {
+  const { t } = useTranslation();
   return (
     <div className="bg-cream">
       {/* Hero with Parallax */}
@@ -2416,6 +2425,7 @@ function StoryPage({ onShop }) {
    CHAPTERS PAGE
    ========================================================= */
 function ChaptersPage({ onProduct, onAdd, onWish }) {
+  const { t } = useTranslation();
   const chapters = [
     {
       num: "I",
@@ -2446,7 +2456,7 @@ function ChaptersPage({ onProduct, onAdd, onWish }) {
           className="font-display text-petrol text-6xl md:text-8xl leading-tight font-light animate-fadeUp delay-100"
           style={{ fontFamily: '"Cormorant Garamond", serif' }}
         >
-          Les <span className="italic">Chapitres</span>
+          Les <span className="italic">{t('nav.chapters')}</span>
         </h1>
       </section>
       <section className="px-6 lg:px-12 pb-32">
@@ -2530,6 +2540,7 @@ function ChaptersPage({ onProduct, onAdd, onWish }) {
    WISHLIST PAGE
    ========================================================= */
 function WishlistPage({ products, onProduct, onAdd, onWish, onShop }) {
+  const { t } = useTranslation();
   return (
     <div className="bg-cream min-h-screen">
       <div className="max-w-[1500px] mx-auto px-6 lg:px-12 pt-16 pb-32">
@@ -2590,6 +2601,7 @@ function WishlistPage({ products, onProduct, onAdd, onWish, onShop }) {
    ACCOUNT PAGE
    ========================================================= */
 function AccountPage({ user, setUser, orders, onShop }) {
+  const { t } = useTranslation();
   const [tab, setTab] = useState("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -2713,14 +2725,14 @@ function AccountPage({ user, setUser, orders, onShop }) {
             <>
               <input
                 type="text"
-                placeholder="Prénom"
+                placeholder={t('form.firstname')}
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
               />
               <input
                 type="text"
-                placeholder="Nom"
+                placeholder={t('form.lastname')}
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
@@ -2729,14 +2741,14 @@ function AccountPage({ user, setUser, orders, onShop }) {
           )}
           <input
             type="email"
-            placeholder="E-mail"
+            placeholder={t('form.email')}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
           />
           <input
             type="password"
-            placeholder="Mot de passe"
+            placeholder={t('form.password')}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
@@ -2757,6 +2769,7 @@ function AccountPage({ user, setUser, orders, onShop }) {
    CHECKOUT PAGE (GIFTING PT. 3)
    ========================================================= */
 function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [isGift, setIsGift] = useState(false);
   const [formData, setFormData] = useState({
@@ -2835,7 +2848,7 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="Adresse e-mail"
+                placeholder={t('form.email')}
                 className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
               />
             </section>
@@ -2850,7 +2863,7 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleChange}
-                  placeholder="Prénom"
+                  placeholder={t('form.firstname')}
                   className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
                 />
                 <input
@@ -2858,7 +2871,7 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleChange}
-                  placeholder="Nom"
+                  placeholder={t('form.lastname')}
                   className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
                 />
               </div>
@@ -2867,7 +2880,7 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
-                placeholder="Adresse"
+                placeholder={t('form.address')}
                 className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors mb-4"
               />
               <div className="grid grid-cols-3 gap-4 mb-4">
@@ -2876,7 +2889,7 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
                   name="zip"
                   value={formData.zip}
                   onChange={handleChange}
-                  placeholder="Code postal"
+                  placeholder={t('form.zip')}
                   className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
                 />
                 <input
@@ -2884,7 +2897,7 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
                   name="city"
                   value={formData.city}
                   onChange={handleChange}
-                  placeholder="Ville"
+                  placeholder={t('form.city')}
                   className="col-span-2 w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
                 />
               </div>
@@ -2940,7 +2953,7 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
                   name="cardName"
                   value={formData.cardName}
                   onChange={handleChange}
-                  placeholder="Nom sur la carte"
+                  placeholder={t('form.cardName')}
                   className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors mb-4"
                 />
                 <div className="relative mb-4">
@@ -2949,7 +2962,7 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
                     name="cardNumber"
                     value={formData.cardNumber}
                     onChange={handleChange}
-                    placeholder="Numéro de carte"
+                    placeholder={t('form.cardNumber')}
                     className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors pl-12"
                   />
                   <CreditCard
@@ -3048,11 +3061,11 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
               </div>
               <div className="border-t border-petrol/10 pt-4 space-y-3 text-sm font-light">
                 <div className="flex justify-between">
-                  <span>Sous-total</span>
+                  <span>{t('cart.subtotal')}</span>
                   <span>{cartTotal}€</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Livraison</span>
+                  <span>{t('footer.shipping')}</span>
                   <span className={shippingCost === 0 ? "text-gold" : ""}>
                     {shippingCost === 0 ? "Offerte" : `${shippingCost}€`}
                   </span>
@@ -3081,6 +3094,7 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
    MANIFESTO PAGE
    ========================================================= */
 function ManifestoPage() {
+  const { t } = useTranslation();
   return (
     <div className="bg-cream py-32 px-6">
       <div className="max-w-4xl mx-auto text-center">
@@ -3114,6 +3128,7 @@ function ManifestoPage() {
    ATELIER / SAVOIR-FAIRE PAGE (IMMERSION PT. 4)
    ========================================================= */
 function AtelierPage() {
+  const { t } = useTranslation();
   return (
     <div className="bg-cream pb-32">
       {/* Hero Parallax */}
@@ -3257,7 +3272,7 @@ function ServicePage({ initialTab = "livraison", onShop }) {
           )}
           {tab === "tailles" && (
             <div className="space-y-4 text-petrol/80 font-light">
-              <h2 className="font-display text-3xl mb-6">Guide des tailles</h2>
+              <h2 className="font-display text-3xl mb-6">{t('footer.sizeGuide')}</h2>
               <p>
                 Nos vêtements taillent normalement. Nous vous recommandons de
                 prendre votre taille habituelle.
@@ -3316,7 +3331,7 @@ function LegalPage({ initialTab = "mentions" }) {
         <div className="animate-fadeIn space-y-4 text-petrol/80 font-light">
           {tab === "mentions" && (
             <>
-              <h2 className="font-display text-3xl mb-6">Mentions légales</h2>
+              <h2 className="font-display text-3xl mb-6">{t('footer.legal')}</h2>
               <p>KALASAM SAS au capital de 10 000€</p>
             </>
           )}
@@ -3404,18 +3419,18 @@ function ContactPage({ onBookAppointment, onChatOpen }) {
               <div className="grid grid-cols-2 gap-6">
                 <input
                   type="text"
-                  placeholder="Prénom"
+                  placeholder={t('form.firstname')}
                   className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
                 />
                 <input
                   type="text"
-                  placeholder="Nom"
+                  placeholder={t('form.lastname')}
                   className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
                 />
               </div>
               <input
                 type="email"
-                placeholder="E-mail"
+                placeholder={t('form.email')}
                 className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
               />
               <textarea
