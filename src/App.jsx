@@ -73,22 +73,37 @@ const PRODUCTS = [
     category: "Robes",
     price: 7800,
     colors: [
-      { name: "Pétrole", hex: "#1E3F52" },
-      { name: "Sable", hex: "#D2BD9C" },
+      {
+        name: "Pétrole",
+        hex: "#1E3F52",
+        // Ta galerie actuelle pour la couleur PÉTROLE
+        gallery: [
+          { type: "image", src: "leader.jpeg" },
+          { type: "image", src: "Image1.png" },
+          { type: "image", src: "Image2.png" },
+          { type: "image", src: "Image3.png" },
+          { type: "video", src: "robe_video.mp4" },
+        ],
+      },
+      {
+        name: "Sable",
+        hex: "#D2BD9C",
+        // Ta NOUVELLE galerie pour la couleur SABLE 👇 REMPLACE LES LIENS ICI 👇
+        gallery: [
+          { type: "image", src: "leader_beige.png" }, // C'est l'image qui s'affichera en grand au clic
+          { type: "image", src: "leader_beige.png" },
+          { type: "image", src: "leader_beige.png" },
+          { type: "image", src: "leader_beige.png" },
+          { type: "image", src: "leader_beige.png" },
+        ],
+      },
     ],
     sizes: ["XS", "S", "M", "L", "XL"],
     badge: "Nouveauté",
     chapter: "Chapitre I — Origines",
     description:
       "Robe longue fluide aux drapés naturels. Une silhouette qui voyage, qui s'adapte, qui regarde vers l'avenir sans oublier d'où elle vient.",
-    img: "leader.jpeg",
-    gallery: [
-      { type: "image", src: "leader.jpeg" },
-      { type: "image", src: "Image1.png" },
-      { type: "image", src: "Image2.png" },
-      { type: "image", src: "Image3.png" },
-      { type: "video", src: "robe_video.mp4" },
-    ],
+    img: "leader.jpeg", // Reste l'image par défaut sur la page boutique globale
   },
   {
     id: 2,
@@ -265,67 +280,67 @@ const ProductImage = ({ src, alt, name, className = "" }) => {
 const ProductCard = ({ product, onOpen, onAdd, onWish }) => {
   const { t } = useTranslation();
   return (
-  <div className="group cursor-pointer flex flex-col">
-    <div 
-      className="relative aspect-[3/4] overflow-hidden mb-4"
-      onClick={() => onOpen(product)}
-    >
-      <ProductImage
-        src={product.img}
-        alt={product.name}
-        name={product.name}
-        className="absolute inset-0"
-      />
-      {product.badge && (
-        <span className="absolute top-4 left-4 bg-cream/90 backdrop-blur px-3 py-1 text-[10px] tracking-[0.25em] uppercase text-petrol font-light">
-          {product.badge}
-        </span>
-      )}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onWish(product);
-        }}
-        className="absolute top-4 right-4 w-9 h-9 bg-cream/90 backdrop-blur rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-cream"
-        aria-label="Ajouter à la wishlist"
+    <div className="group cursor-pointer flex flex-col">
+      <div
+        className="relative aspect-[3/4] overflow-hidden mb-4"
+        onClick={() => onOpen(product)}
       >
-        <Heart size={15} className="text-petrol" />
-      </button>
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onAdd(product);
-        }}
-      className="absolute bottom-0 left-0 right-0 bg-petrol text-cream py-4 text-[11px] tracking-[0.3em] uppercase font-light translate-y-full group-hover:translate-y-0 transition-transform duration-500 hover:bg-petrol-dark"
-    >
-      {t('product.addToCart')}
-    </button>
-    </div>
-    <div
-      className="flex items-start justify-between gap-4 px-1"
-      onClick={() => onOpen(product)}
-    >
-      <div>
-        <p className="text-[10px] tracking-[0.3em] uppercase text-petrol/50 mb-1.5 font-light">
-          {product.category}
-        </p>
-        <h3
-          className="font-display text-petrol text-xl tracking-wide"
+        <ProductImage
+          src={product.img}
+          alt={product.name}
+          name={product.name}
+          className="absolute inset-0"
+        />
+        {product.badge && (
+          <span className="absolute top-4 left-4 bg-cream/90 backdrop-blur px-3 py-1 text-[10px] tracking-[0.25em] uppercase text-petrol font-light">
+            {product.badge}
+          </span>
+        )}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onWish(product);
+          }}
+          className="absolute top-4 right-4 w-9 h-9 bg-cream/90 backdrop-blur rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-cream"
+          aria-label="Ajouter à la wishlist"
+        >
+          <Heart size={15} className="text-petrol" />
+        </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onAdd(product);
+          }}
+          className="absolute bottom-0 left-0 right-0 bg-petrol text-cream py-4 text-[11px] tracking-[0.3em] uppercase font-light translate-y-full group-hover:translate-y-0 transition-transform duration-500 hover:bg-petrol-dark"
+        >
+          {t("product.addToCart")}
+        </button>
+      </div>
+      <div
+        className="flex items-start justify-between gap-4 px-1"
+        onClick={() => onOpen(product)}
+      >
+        <div>
+          <p className="text-[10px] tracking-[0.3em] uppercase text-petrol/50 mb-1.5 font-light">
+            {product.category}
+          </p>
+          <h3
+            className="font-display text-petrol text-xl tracking-wide"
+            style={{ fontFamily: '"Cormorant Garamond", serif' }}
+          >
+            {product.name}
+          </h3>
+        </div>
+        <span
+          className="font-display text-petrol text-lg tracking-wider mt-3"
           style={{ fontFamily: '"Cormorant Garamond", serif' }}
         >
-          {product.name}
-        </h3>
+          {product.price}€
+        </span>
       </div>
-      <span
-        className="font-display text-petrol text-lg tracking-wider mt-3"
-        style={{ fontFamily: '"Cormorant Garamond", serif' }}
-      >
-        {product.price}€
-      </span>
     </div>
-  </div>
-);
-}
+  );
+};
 
 // ---------- Main app ----------
 export default function KalasamSite() {
@@ -683,7 +698,7 @@ export default function KalasamSite() {
                 autoFocus
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={t('nav.search')}
+                placeholder={t("nav.search")}
                 className="flex-1 bg-transparent border-0 text-petrol font-display text-2xl tracking-wide"
                 style={{ fontFamily: '"Cormorant Garamond", serif' }}
                 onKeyDown={(e) => {
@@ -779,7 +794,7 @@ export default function KalasamSite() {
                            {" "}
               <input
                 type="email"
-                placeholder={t('form.email')}
+                placeholder={t("form.email")}
                 className="w-full border-b border-petrol/30 bg-transparent py-3 text-sm focus:border-gold outline-none"
               />
                            {" "}
@@ -868,7 +883,7 @@ export default function KalasamSite() {
                                {" "}
                 <input
                   type="text"
-                  placeholder={t('chat.placeholder')}
+                  placeholder={t("chat.placeholder")}
                   className="w-full bg-sand-light/30 border border-petrol/20 px-4 py-3 text-sm focus:border-gold outline-none rounded-full pr-12"
                 />
                                {" "}
@@ -1021,7 +1036,7 @@ export default function KalasamSite() {
                 type="email"
                 value={emailValue}
                 onChange={(e) => setEmailValue(e.target.value)}
-                placeholder={t('form.email')}
+                placeholder={t("form.email")}
                 className="flex-1 bg-transparent border border-cream/30 px-5 py-4 text-cream newsletter-input text-sm tracking-wider focus:border-gold outline-none transition-colors"
                 style={{ color: "#FAF6EE" }}
               />
@@ -1451,11 +1466,11 @@ export default function KalasamSite() {
             {cart.length > 0 && (
               <div className="border-t border-petrol/10 p-6 space-y-4 bg-sand-light/40">
                 <div className="flex justify-between text-sm font-light">
-                  <span>{t('cart.subtotal')}</span>
+                  <span>{t("cart.subtotal")}</span>
                   <span>{cartTotal}€</span>
                 </div>
                 <div className="flex justify-between text-sm font-light">
-                  <span>{t('footer.shipping')}</span>
+                  <span>{t("footer.shipping")}</span>
                   <span className="text-gold">
                     {cartTotal >= 200 ? "Offerte" : "12€"}
                   </span>
@@ -1464,7 +1479,7 @@ export default function KalasamSite() {
                   className="flex justify-between font-display text-2xl pt-3 border-t border-petrol/10"
                   style={{ fontFamily: '"Cormorant Garamond", serif' }}
                 >
-                  <span>{t('cart.total')}</span>
+                  <span>{t("cart.total")}</span>
                   <span>{cartTotal + (cartTotal >= 200 ? 0 : 12)}€</span>
                 </div>
                 <button
@@ -1760,7 +1775,7 @@ function HomePage({ onShop, onStory, onProduct, onAdd, onWish }) {
                 className="font-display text-petrol text-5xl md:text-6xl leading-[1.05] mb-6 font-light"
                 style={{ fontFamily: '"Cormorant Garamond", serif' }}
               >
-                <span className="italic">{t('section.memory')}</span>
+                <span className="italic">{t("section.memory")}</span>
                 <br />
                 en mouvement
               </h2>
@@ -1862,9 +1877,9 @@ function ShopPage({
               onChange={(e) => setSort(e.target.value)}
               className="bg-transparent border border-petrol/20 px-3 py-2 text-xs tracking-wider cursor-pointer"
             >
-              <option value="newest">{t('shop.sortNewest')}</option>
-              <option value="price-asc">{t('shop.sortAsc')}</option>
-              <option value="price-desc">{t('shop.sortDesc')}</option>
+              <option value="newest">{t("shop.sortNewest")}</option>
+              <option value="price-asc">{t("shop.sortAsc")}</option>
+              <option value="price-desc">{t("shop.sortDesc")}</option>
             </select>
           </div>
         </div>
@@ -1965,7 +1980,8 @@ function ProductPage({
       onAdd(product, size || product.sizes[0], color);
   };
 
-  const mediaList = product.gallery || [{ type: "image", src: product.img }];
+  const mediaList = color.gallery ||
+    product.gallery || [{ type: "image", src: product.img }];
   const related = PRODUCTS.filter(
     (p) => p.chapter === product.chapter && p.id !== product.id,
   ).slice(0, 4);
@@ -2000,7 +2016,7 @@ function ProductPage({
             className="bg-petrol text-cream px-8 py-3 text-[10px] tracking-[0.3em] uppercase hover:bg-gold transition-colors flex items-center gap-2"
           >
             <ShoppingBag size={14} />{" "}
-            <span className="hidden sm:inline">{t('product.addToCart')}</span>
+            <span className="hidden sm:inline">{t("product.addToCart")}</span>
           </button>
         </div>
       )}
@@ -2109,9 +2125,14 @@ function ProductPage({
                 {product.colors.map((c) => (
                   <button
                     key={c.name}
-                    onClick={() => setColor(c)}
+                    onClick={() => {
+                      setColor(c);
+                      setActiveMedia(0);
+                    }}
                     className={`relative w-10 h-10 rounded-full border-2 transition-all ${color.name === c.name ? "border-petrol scale-110" : "border-petrol/20 hover:border-petrol/50"}`}
-                    style={{ backgroundColor: c.hex }}
+                    style={{
+                      backgroundColor: c.hex,
+                    }} /* <--- AJOUTE CETTE LIGNE ICI */
                   >
                     {color.name === c.name && (
                       <Check
@@ -2456,7 +2477,7 @@ function ChaptersPage({ onProduct, onAdd, onWish }) {
           className="font-display text-petrol text-6xl md:text-8xl leading-tight font-light animate-fadeUp delay-100"
           style={{ fontFamily: '"Cormorant Garamond", serif' }}
         >
-          Les <span className="italic">{t('nav.chapters')}</span>
+          Les <span className="italic">{t("nav.chapters")}</span>
         </h1>
       </section>
       <section className="px-6 lg:px-12 pb-32">
@@ -2725,14 +2746,14 @@ function AccountPage({ user, setUser, orders, onShop }) {
             <>
               <input
                 type="text"
-                placeholder={t('form.firstname')}
+                placeholder={t("form.firstname")}
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
               />
               <input
                 type="text"
-                placeholder={t('form.lastname')}
+                placeholder={t("form.lastname")}
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
@@ -2741,14 +2762,14 @@ function AccountPage({ user, setUser, orders, onShop }) {
           )}
           <input
             type="email"
-            placeholder={t('form.email')}
+            placeholder={t("form.email")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
           />
           <input
             type="password"
-            placeholder={t('form.password')}
+            placeholder={t("form.password")}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
@@ -2848,7 +2869,7 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder={t('form.email')}
+                placeholder={t("form.email")}
                 className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
               />
             </section>
@@ -2863,7 +2884,7 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleChange}
-                  placeholder={t('form.firstname')}
+                  placeholder={t("form.firstname")}
                   className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
                 />
                 <input
@@ -2871,7 +2892,7 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleChange}
-                  placeholder={t('form.lastname')}
+                  placeholder={t("form.lastname")}
                   className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
                 />
               </div>
@@ -2880,7 +2901,7 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
-                placeholder={t('form.address')}
+                placeholder={t("form.address")}
                 className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors mb-4"
               />
               <div className="grid grid-cols-3 gap-4 mb-4">
@@ -2889,7 +2910,7 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
                   name="zip"
                   value={formData.zip}
                   onChange={handleChange}
-                  placeholder={t('form.zip')}
+                  placeholder={t("form.zip")}
                   className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
                 />
                 <input
@@ -2897,7 +2918,7 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
                   name="city"
                   value={formData.city}
                   onChange={handleChange}
-                  placeholder={t('form.city')}
+                  placeholder={t("form.city")}
                   className="col-span-2 w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors"
                 />
               </div>
@@ -2953,7 +2974,7 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
                   name="cardName"
                   value={formData.cardName}
                   onChange={handleChange}
-                  placeholder={t('form.cardName')}
+                  placeholder={t("form.cardName")}
                   className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors mb-4"
                 />
                 <div className="relative mb-4">
@@ -2962,7 +2983,7 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
                     name="cardNumber"
                     value={formData.cardNumber}
                     onChange={handleChange}
-                    placeholder={t('form.cardNumber')}
+                    placeholder={t("form.cardNumber")}
                     className="w-full bg-transparent border border-petrol/20 px-4 py-3 text-sm focus:border-gold transition-colors pl-12"
                   />
                   <CreditCard
@@ -3061,11 +3082,11 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
               </div>
               <div className="border-t border-petrol/10 pt-4 space-y-3 text-sm font-light">
                 <div className="flex justify-between">
-                  <span>{t('cart.subtotal')}</span>
+                  <span>{t("cart.subtotal")}</span>
                   <span>{cartTotal}€</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>{t('footer.shipping')}</span>
+                  <span>{t("footer.shipping")}</span>
                   <span className={shippingCost === 0 ? "text-gold" : ""}>
                     {shippingCost === 0 ? "Offerte" : `${shippingCost}€`}
                   </span>
@@ -3272,7 +3293,9 @@ function ServicePage({ initialTab = "livraison", onShop }) {
           )}
           {tab === "tailles" && (
             <div className="space-y-4 text-petrol/80 font-light">
-              <h2 className="font-display text-3xl mb-6">{t('footer.sizeGuide')}</h2>
+              <h2 className="font-display text-3xl mb-6">
+                {t("footer.sizeGuide")}
+              </h2>
               <p>
                 Nos vêtements taillent normalement. Nous vous recommandons de
                 prendre votre taille habituelle.
@@ -3331,7 +3354,9 @@ function LegalPage({ initialTab = "mentions" }) {
         <div className="animate-fadeIn space-y-4 text-petrol/80 font-light">
           {tab === "mentions" && (
             <>
-              <h2 className="font-display text-3xl mb-6">{t('footer.legal')}</h2>
+              <h2 className="font-display text-3xl mb-6">
+                {t("footer.legal")}
+              </h2>
               <p>KALASAM SAS au capital de 10 000€</p>
             </>
           )}
@@ -3419,18 +3444,18 @@ function ContactPage({ onBookAppointment, onChatOpen }) {
               <div className="grid grid-cols-2 gap-6">
                 <input
                   type="text"
-                  placeholder={t('form.firstname')}
+                  placeholder={t("form.firstname")}
                   className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
                 />
                 <input
                   type="text"
-                  placeholder={t('form.lastname')}
+                  placeholder={t("form.lastname")}
                   className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
                 />
               </div>
               <input
                 type="email"
-                placeholder={t('form.email')}
+                placeholder={t("form.email")}
                 className="w-full bg-transparent border-b border-petrol/30 py-3 text-sm focus:border-gold transition-colors"
               />
               <textarea
