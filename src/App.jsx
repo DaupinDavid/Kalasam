@@ -29,6 +29,7 @@ import {
   ShieldCheck,
   CreditCard,
 } from "lucide-react";
+import { LanguageSelector, useTranslation } from "./i18n/kalasam_i18n";
 
 /* =========================================================
    KALASAM — From exile to identity
@@ -256,9 +257,11 @@ const ProductImage = ({ src, alt, name, className = "" }) => {
 };
 
 // ---------- Product card ----------
-const ProductCard = ({ product, onOpen, onAdd, onWish }) => (
+const ProductCard = ({ product, onOpen, onAdd, onWish }) => {
+  const { t } = useTranslation();
+  return (
   <div className="group cursor-pointer flex flex-col">
-    <div
+    <div 
       className="relative aspect-[3/4] overflow-hidden mb-4"
       onClick={() => onOpen(product)}
     >
@@ -288,10 +291,10 @@ const ProductCard = ({ product, onOpen, onAdd, onWish }) => (
           e.stopPropagation();
           onAdd(product);
         }}
-        className="absolute bottom-0 left-0 right-0 bg-petrol text-cream py-4 text-[11px] tracking-[0.3em] uppercase font-light translate-y-full group-hover:translate-y-0 transition-transform duration-500 hover:bg-petrol-dark"
-      >
-        Ajouter au panier
-      </button>
+      className="absolute bottom-0 left-0 right-0 bg-petrol text-cream py-4 text-[11px] tracking-[0.3em] uppercase font-light translate-y-full group-hover:translate-y-0 transition-transform duration-500 hover:bg-petrol-dark"
+    >
+      {t('product.addToCart')}
+    </button>
     </div>
     <div
       className="flex items-start justify-between gap-4 px-1"
@@ -317,6 +320,7 @@ const ProductCard = ({ product, onOpen, onAdd, onWish }) => (
     </div>
   </div>
 );
+}
 
 // ---------- Main app ----------
 export default function KalasamSite() {
@@ -628,6 +632,7 @@ export default function KalasamSite() {
             >
               <Search size={18} />
             </button>
+            <LanguageSelector />
             <button
               onClick={() => goto("account")}
               className="hidden sm:block hover:text-gold transition-colors"
@@ -1488,6 +1493,7 @@ export default function KalasamSite() {
    HOME PAGE
    ========================================================= */
 function HomePage({ onShop, onStory, onProduct, onAdd, onWish }) {
+  const { t } = useTranslation();
   const featured = PRODUCTS.slice(0, 3);
   const newest = PRODUCTS.slice(1, 5);
 
@@ -1516,7 +1522,8 @@ function HomePage({ onShop, onStory, onProduct, onAdd, onWish }) {
               letterSpacing: "-0.02em",
             }}
           >
-            De l'exil <span className="italic opacity-90">à l'identité.</span>
+            {t("hero.headline1")}{" "}
+            <span className="italic opacity-90">{t("hero.headline2")}</span>
           </h1>
 
           <div className="flex flex-col sm:flex-row gap-3 animate-fadeUp delay-300 pointer-events-auto w-fit">
@@ -1524,7 +1531,7 @@ function HomePage({ onShop, onStory, onProduct, onAdd, onWish }) {
               onClick={onShop}
               className="group bg-cream text-petrol px-6 py-2.5 text-[9px] tracking-[0.2em] uppercase hover:bg-gold hover:text-cream transition-all flex items-center justify-center gap-2 shadow-sm w-fit"
             >
-              Découvrir la collection
+              {t("hero.cta.discover")}
               <ArrowRight
                 size={11}
                 className="group-hover:translate-x-1 transition-transform"
@@ -1534,7 +1541,7 @@ function HomePage({ onShop, onStory, onProduct, onAdd, onWish }) {
               onClick={onStory}
               className="border border-cream/50 text-cream px-6 py-2.5 text-[9px] tracking-[0.2em] uppercase hover:bg-cream hover:text-petrol transition-all backdrop-blur-sm flex items-center justify-center w-fit"
             >
-              Notre histoire
+              {t("hero.cta.story")}
             </button>
           </div>
         </div>
@@ -2013,7 +2020,10 @@ function ProductPage({
                   key={i}
                   type="button"
                   /* CORRECTION 1 : e.preventDefault() assure que le clic fonctionne à tous les coups */
-                  onClick={(e) => { e.preventDefault(); setActiveMedia(i); }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setActiveMedia(i);
+                  }}
                   /* Ajout de 'relative z-20' pour s'assurer que le bouton capte bien la souris */
                   className={`relative z-20 shrink-0 aspect-[3/4] border-2 transition-all ${activeMedia === i ? "border-gold opacity-100" : "border-transparent opacity-60 hover:opacity-100"}`}
                 >
