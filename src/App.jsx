@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo, useContext, createContext, useCallback } from "react";
-import { createPortal } from "react-dom";
 import {
   ShoppingBag,
   Search,
@@ -30,334 +29,7 @@ import {
   ShieldCheck,
   CreditCard,
 } from "lucide-react";
-
-/* =========================================================
-   KALASAM — Système d'internationalisation (i18n)
-   ========================================================= */
-
-const LANGUAGES = {
-  fr: { code: "fr", flag: "🇫🇷", native: "Français", label: "Français", group: "international", dir: "ltr" },
-  en: { code: "en", flag: "🇬🇧", native: "English", label: "Anglais", group: "international", dir: "ltr" },
-  es: { code: "es", flag: "🇪🇸", native: "Español", label: "Espagnol", group: "international", dir: "ltr" },
-  de: { code: "de", flag: "🇩🇪", native: "Deutsch", label: "Allemand", group: "international", dir: "ltr" },
-  it: { code: "it", flag: "🇮🇹", native: "Italiano", label: "Italien", group: "international", dir: "ltr" },
-  pt: { code: "pt", flag: "🇵🇹", native: "Português", label: "Portugais", group: "international", dir: "ltr" },
-  zh: { code: "zh", flag: "🇨🇳", native: "中文", label: "Chinois", group: "international", dir: "ltr" },
-  ja: { code: "ja", flag: "🇯🇵", native: "日本語", label: "Japonais", group: "international", dir: "ltr" },
-  tl: { code: "tl", flag: "🇵🇭", native: "Filipino", label: "Tagalog", group: "heritage", region: "Philippines", dir: "ltr" },
-  ceb: { code: "ceb", flag: "🇵🇭", native: "Cebuano", label: "Cebuano", group: "heritage", region: "Philippines", dir: "ltr" },
-  ar: { code: "ar", flag: "🇲🇦", native: "العربية", label: "Arabe", group: "heritage", region: "Maroc", dir: "rtl" },
-  ber: { code: "ber", flag: "🇲🇦", native: "ⵜⴰⵎⴰⵣⵉⵖⵜ", label: "Tamazight", group: "heritage", region: "Maroc", dir: "ltr" },
-  ta: { code: "ta", flag: "🇱🇰", native: "தமிழ்", label: "Tamoul", group: "heritage", region: "Sri Lanka", dir: "ltr" },
-  si: { code: "si", flag: "🇱🇰", native: "සිංහල", label: "Cingalais", group: "heritage", region: "Sri Lanka", dir: "ltr" },
-};
-
-const TRANSLATIONS = {
-  "nav.search": { fr: "Rechercher une pièce, une catégorie, un chapitre..." },
-  "nav.home": { fr: "Accueil" },
-  "nav.account": { fr: "Mon compte" },
-  "nav.wishlist": { fr: "Favoris" },
-  "nav.allPieces": { fr: "Toutes les pièces" },
-  "hero.cta.readStory": { fr: "Lire l'histoire complète" },
-  "shop.subtitle": { fr: "La boutique" },
-  "shop.filters": { fr: "Filtres" },
-  "shop.sort": { fr: "Tri" },
-  "shop.sortNewest": { fr: "Plus récents" },
-  "shop.sortAsc": { fr: "Prix croissant" },
-  "shop.sortDesc": { fr: "Prix décroissant" },
-  "shop.empty": { fr: "Aucune pièce trouvée" },
-  "shop.seeAll": { fr: "Tout voir" },
-  "product.backToShop": { fr: "Retour à la boutique" },
-  "product.colorLabel": { fr: "Coloris :" },
-  "product.sizeGuide": { fr: "Guide des tailles" },
-  "product.completeLook": { fr: "Compléter la silhouette" },
-  "product.artOfSet": { fr: "L'art de l'ensemble" },
-  "cart.shopNow": { fr: "Voir la boutique" },
-  "cart.securePayment": { fr: "Paiement sécurisé · Livraison soignée" },
-  "checkout.summary": { fr: "Résumé de la commande" },
-  "checkout.submit": { fr: "Valider la Commande" },
-  "checkout.contact": { fr: "1. Contact" },
-  "checkout.shipping": { fr: "2. Livraison" },
-  "checkout.payment": { fr: "3. Paiement" },
-  "checkout.gift": { fr: "L'Art d'Offrir (Cadeau)" },
-  "checkout.confirmed": { fr: "Commande confirmée" },
-  "checkout.thanks": { fr: "Merci pour votre confiance." },
-  "checkout.backHome": { fr: "Retour à l'accueil" },
-  "form.firstname": { fr: "Prénom" },
-  "form.lastname": { fr: "Nom" },
-  "form.email": { fr: "E-mail" },
-  "form.password": { fr: "Mot de passe" },
-  "form.address": { fr: "Adresse" },
-  "form.zip": { fr: "Code postal" },
-  "form.city": { fr: "Ville" },
-  "form.cardName": { fr: "Nom sur la carte" },
-  "form.cardNumber": { fr: "Numéro de carte" },
-  "form.confirm": { fr: "Confirmer la demande" },
-  "account.logout": { fr: "Se déconnecter" },
-  "account.history": { fr: "Historique des commandes" },
-  "account.login": { fr: "Connexion" },
-  "account.signup": { fr: "Créer un compte" },
-  "account.loginAction": { fr: "Se connecter" },
-  "account.signupAction": { fr: "Créer mon compte" },
-  "chat.advisor": { fr: "Conseiller Privé" },
-  "chat.advisorName": { fr: "Conseiller KALASAM" },
-  "chat.online": { fr: "En ligne" },
-  "chat.placeholder": { fr: "Écrivez votre message..." },
-  "modal.bookingTitle": { fr: "Essayage Privé" },
-  "newsletter.subtitle": { fr: "Lettre KALASAM" },
-  "newsletter.title": { fr: "Recevez nos chapitres avant tout le monde" },
-  "newsletter.subscribe": { fr: "S'inscrire" },
-  "newsletter.success": { fr: "Bienvenue. À très vite." },
-  "section.selection": { fr: "La sélection" },
-  "section.signatureItems": { fr: "Pièces signature" },
-  "section.dna": { fr: "Notre ADN" },
-  "section.codes": { fr: "Les codes de la maison" },
-  "section.newArrivals": { fr: "Nouvelles arrivées" },
-  "section.thisWeek": { fr: "Cette semaine" },
-  "section.lookbook": { fr: "Lookbook" },
-  "section.memory": { fr: "Mémoire" },
-  "section.inMotion": { fr: "en mouvement" },
-  "section.allShop": { fr: "Toute la boutique" },
-  "wishlist.subtitle": { fr: "Mes favoris" },
-  "wishlist.empty": { fr: "Votre wishlist est vide" },
-  "cat.jackets": { fr: "Vestes" },
-  "cat.dresses": { fr: "Robes" },
-  "cat.tops": { fr: "Hauts" },
-  "cat.pants": { fr: "Pantalons" },
-  "cat.skirts": { fr: "Jupes" },
-  "cat.all": { fr: "Tout" },
-  "footer.shipping": { fr: "Livraison" },
-  "footer.returns": { fr: "Retours" },
-  "footer.sizeGuide": { fr: "Guide des tailles" },
-  "footer.care": { fr: "Entretien" },
-  "footer.legal": { fr: "Mentions légales" },
-  "footer.privacy": { fr: "Confidentialité" },
-  "footer.cookies": { fr: "Cookies" },
-  "footer.rights": { fr: "Tous droits réservés." },
-  "footer.returns30": { fr: "Retours sous 30 jours" },
-  "footer.worldwide": { fr: "Expédition mondiale" },
-  "banner.shipping": { fr: "✦ Livraison offerte dès 200€" },
-  "banner.edition": { fr: "✦ Édition limitée — Chapitre I disponible" },
-  "banner.madeinfrance": { fr: "✦ Made in France" },
-  "banner.exile": { fr: "✦ De l'exil à l'identité" },
-  "nav.shop": { fr: "Boutique" },
-  "nav.story": { fr: "Notre Histoire" },
-  "nav.chapters": { fr: "Chapitres" },
-  "nav.contact": { fr: "Contact" },
-  "hero.headline1": { fr: "De l'exil" },
-  "hero.headline2": { fr: "à l'identité." },
-  "hero.cta.discover": { fr: "Découvrir la collection" },
-  "hero.cta.story": { fr: "Notre histoire" },
-  "product.addToCart": { fr: "Ajouter au panier" },
-  "product.size": { fr: "Taille" },
-  "product.color": { fr: "Coloris" },
-  "product.booking": { fr: "Réserver un essayage privé" },
-  "product.madeInFrance": { fr: "Made in France" },
-  "product.limitedSeries": { fr: "Série limitée & numérotée" },
-  "cart.title": { fr: "Votre panier" },
-  "cart.empty": { fr: "Votre panier est vide" },
-  "cart.subtotal": { fr: "Sous-total" },
-  "cart.total": { fr: "Total" },
-  "cart.checkout": { fr: "Passer au paiement" },
-  "cart.shipping": { fr: "Livraison" },
-  "cart.shippingFree": { fr: "Offerte" },
-  "footer.tagline": { fr: "From exile to identity." },
-  "footer.newsletter.title": { fr: "Recevez nos chapitres avant tout le monde" },
-};
-
-const LanguageContext = createContext({ lang: "fr", setLang: () => {} });
-
-export function LanguageProvider({ children }) {
-  const [lang, setLang] = useState(
-    () => localStorage.getItem("kalasam-lang") || "fr"
-  );
-
-  const changeLang = useCallback((code) => {
-    setLang(code);
-    localStorage.setItem("kalasam-lang", code);
-    document.documentElement.setAttribute(
-      "dir",
-      LANGUAGES[code]?.dir || "ltr"
-    );
-  },[]);
-
-  return (
-    <LanguageContext.Provider value={{ lang, setLang: changeLang }}>
-      {children}
-    </LanguageContext.Provider>
-  );
-}
-
-export function useTranslation() {
-  const { lang, setLang } = useContext(LanguageContext);
-  const t = useCallback(
-    (key) => {
-      const entry = TRANSLATIONS[key];
-      if (!entry) return key;
-      return entry[lang] || entry["fr"] || key;
-    },
-    [lang]
-  );
-  return { t, lang, setLang, langInfo: LANGUAGES[lang] };
-}
-
-export function LanguageSelector() {
-  const { lang, setLang } = useContext(LanguageContext);
-  const [open, setOpen] = useState(false);
-
-  const intlLangs = Object.values(LANGUAGES).filter(
-    (l) => l.group === "international"
-  );
-  const heritageLangs = Object.values(LANGUAGES).filter(
-    (l) => l.group === "heritage"
-  );
-  const current = LANGUAGES[lang] || LANGUAGES["fr"];
-
-  return (
-    <>
-      <button
-        onClick={() => setOpen(true)}
-        className="flex items-center gap-1.5 hover:text-gold transition-colors"
-        aria-label="Changer de langue"
-      >
-        <Globe size={18} />
-        <span className="hidden lg:inline text-[10px] tracking-[0.2em] uppercase">
-          {current.code.toUpperCase()}
-        </span>
-        <ChevronDown size={11} className="hidden lg:inline" />
-      </button>
-
-      {/* ── Panneau de sélection propulsé dans le body ── */}
-      {open && createPortal(
-        <div className="fixed inset-0 z-[70] flex items-start justify-center overflow-y-auto p-4 pt-12 sm:items-center">
-          <div
-            className="absolute inset-0 bg-petrol/50 backdrop-blur-sm animate-fadeIn"
-            onClick={() => setOpen(false)}
-          />
-
-          <div
-            className="relative bg-cream w-full max-w-2xl animate-fadeUp shadow-2xl border border-petrol/10 mb-8 sm:mb-0"
-            style={{ fontFamily: "'Jost', sans-serif" }}
-          >
-            <div className="sticky top-0 bg-cream/95 backdrop-blur px-8 py-6 border-b border-petrol/10 flex items-center justify-between z-10">
-              <div>
-                <p className="text-[9px] tracking-[0.4em] uppercase text-gold mb-1">
-                  KALASAM
-                </p>
-                <h2
-                  className="font-display text-2xl text-petrol"
-                  style={{ fontFamily: '"Cormorant Garamond", serif' }}
-                >
-                  Choisir la langue
-                </h2>
-              </div>
-              <button
-                onClick={() => setOpen(false)}
-                className="text-petrol/40 hover:text-petrol transition-colors"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="px-8 py-8 space-y-10">
-              <div>
-                <p className="text-[9px] tracking-[0.4em] uppercase text-petrol/40 mb-4">
-                  Langues internationales
-                </p>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {intlLangs.map((l) => (
-                    <LangButton
-                      key={l.code}
-                      lang={l}
-                      isActive={lang === l.code}
-                      onSelect={() => { setLang(l.code); setOpen(false); }}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center gap-3 mb-4">
-                  <p className="text-[9px] tracking-[0.4em] uppercase text-petrol/40">
-                    Langues de l'héritage KALASAM
-                  </p>
-                  <div className="h-px flex-1 bg-gold/30" />
-                </div>
-
-                {Array.from(new Set(heritageLangs.map(l => l.region).filter(Boolean))).map((region) => {
-                  const regionLangs = heritageLangs.filter(
-                    (l) => l.region === region
-                  );
-                  const regionFlag = regionLangs[0]?.flag || "🌐";
-                  return (
-                    <div key={region} className="mb-6">
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="text-base">{regionFlag}</span>
-                        <span className="text-[9px] tracking-[0.3em] uppercase text-petrol/50 font-medium">
-                          {region}
-                        </span>
-                      </div>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pl-6">
-                        {regionLangs.map((l) => (
-                          <LangButton
-                            key={l.code}
-                            lang={l}
-                            isActive={lang === l.code}
-                            onSelect={() => { setLang(l.code); setOpen(false); }}
-                            isHeritage
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="px-8 py-5 border-t border-petrol/10 bg-sand-light/20">
-              <p className="text-[10px] text-petrol/50 font-light text-center">
-                Les traductions sont en cours d'amélioration continue.
-                Certaines langues peuvent être partiellement traduites.
-              </p>
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
-    </>
-  );
-}
-
-function LangButton({ lang: l, isActive, onSelect, isHeritage = false }) {
-  return (
-    <button
-      onClick={onSelect}
-      className={`
-        relative flex items-center gap-2.5 px-3 py-2.5 text-left
-        border transition-all duration-200
-        ${isActive
-          ? "border-gold bg-gold/8 text-petrol"
-          : isHeritage
-            ? "border-gold/25 bg-gold/3 hover:border-gold/50 hover:bg-gold/6"
-            : "border-petrol/15 hover:border-petrol/30 hover:bg-petrol/3"
-        }
-      `}
-    >
-      {isActive && (
-        <Check size={10} className="absolute top-1.5 right-1.5 text-gold" />
-      )}
-      <span className="text-lg leading-none flex-shrink-0">{l.flag}</span>
-      <span className="flex flex-col gap-0.5 min-w-0">
-        <span className="text-[12px] font-medium text-petrol truncate">
-          {l.native}
-        </span>
-        <span className="text-[10px] text-petrol/50 truncate">
-          {l.label}
-        </span>
-      </span>
-    </button>
-  );
-}
+import { LanguageProvider, useTranslation, LanguageSelector } from "./i18n/kalasam_i18n";
 
 /* =========================================================
    KALASAM — From exile to identity
@@ -634,7 +306,7 @@ const ProductCard = ({ product, onOpen, onAdd, onWish }) => {
   );
 };
 
-export default function KalasamSite() {
+function KalasamApp() {
   const { t } = useTranslation();
   const [page, setPage] = useState("home");
   const [cart, setCart] = useState([]);
@@ -870,7 +542,7 @@ export default function KalasamSite() {
 
           <nav className="hidden md:flex items-center justify-self-center gap-8 text-sm tracking-[0.25em] uppercase">
             <button onClick={() => goto("shop")} className={`hover:text-gold transition-colors ${page === "shop" ? "text-gold" : ""}`}>
-              Boutique
+              {t("nav.shop")}
             </button>
             <button onClick={() => goto("story")} className={`hover:text-gold transition-colors ${page === "story" ? "text-gold" : ""}`}>
               Notre Histoire
@@ -967,7 +639,6 @@ export default function KalasamSite() {
         </div>
       )}
 
-      {/* [CORRECTION 2] MODAL ESSAYAGE PRIVÉ : items-start, overflow-y-auto, pt-12, nettoyage des espaces fantômes */}
       {appointmentOpen && (
         <div className="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto p-4 pt-12 sm:items-center">
           <div
@@ -1020,7 +691,6 @@ export default function KalasamSite() {
         </div>
       )}
 
-      {/* Nettoyage similaire pour le tiroir de Chat */}
       {chatOpen && (
         <div className="fixed inset-0 z-[50] flex justify-end">
           <div
@@ -1407,7 +1077,13 @@ export default function KalasamSite() {
     </div>
   );
 }
-
+export default function KalasamSite() {
+  return (
+    <LanguageProvider>
+      <KalasamApp />
+    </LanguageProvider>
+  );
+}
 function HomePage({ onShop, onStory, onProduct, onAdd, onWish }) {
   const { t } = useTranslation();
   const featured = PRODUCTS.slice(0, 3);
@@ -1785,7 +1461,7 @@ function StoryPage({ onShop }) {
             <p className="text-[10px] tracking-[0.4em] uppercase text-gold mb-6">Seconde lignée</p>
             <h2 className="font-display text-5xl md:text-6xl leading-tight mb-10 font-light" style={{ fontFamily: '"Cormorant Garamond", serif' }}><span className="italic">Thikana</span> — le Sri Lanka, l'exil, la reconstruction.</h2>
             <div className="space-y-6 text-petrol/80 font-light leading-relaxed text-lg">
-              <p>Une histoire enracinée dans la communauté tamoule du nord de l'île, profondément marquée par la guerre civile. Un père voit sa jeunesse bouleversée brutalement : à 15 ans, il fuit avec sa famille vers des camps de réfugiés en Inde.</p>
+              <p>Une histoire enracinée dans la communauté tamoule du nord de l'île, profondément marquée par la guerre civile. Un père voit sa jeunesse bouleversée brutalement : à 15 ans, il fuit avec sa famille vers des camps de réfugiés en India.</p>
               <p>Mais rester n'est pas une option. Il part seul. D'abord vers l'Allemagne, puis vers la France à 18 ans. Sans repères, sans réseau, il doit tout reconstruire. Une lutte silencieuse, une preuve de <em className="italic text-gold">résilience</em>.</p>
             </div>
           </div>
@@ -1974,7 +1650,7 @@ function CheckoutPage({ cart, cartTotal, onBack, onComplete }) {
   if (cart.length === 0) {
     return (
       <div className="bg-cream min-h-[70vh] flex flex-col items-center justify-center py-24 px-6 text-center">
-        <h2 className="font-display text-4xl mb-4 italic" style={{ fontFamily: '"Cormorant Garamond", serif' }}>Votre panier est vide</h2>
+        <h2 className="font-display text-4xl mb-4 italic" style={{ fontFamily: '"Cormorant Garamond", serif' }}>Votre panier est empty</h2>
         <button onClick={onBack} className="bg-petrol text-cream px-8 py-4 text-[11px] tracking-[0.3em] uppercase hover:bg-petrol-dark transition-colors mt-6">Retour à la boutique</button>
       </div>
     );
